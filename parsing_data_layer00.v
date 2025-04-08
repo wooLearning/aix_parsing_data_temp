@@ -164,6 +164,7 @@ always @(*) begin
 		else wCs = 16'hfff0; 
 	end
 	endcase  
+	
 end
 
 
@@ -252,40 +253,41 @@ always@(posedge clk, negedge rstn) begin
 	   rCol_toggle <= 0;
     end
     else if(iStart && (rCurState != ST_IDLE)) begin
-        if(rCnt_delay == windowDelay)begin
-			rCnt_delay <= 0;
-			rCol <=  rCol + 1;
-			rCol_toggle <= rCol_toggle + 1'b1;//toggle 1bit continuouly adding one 
-
-			if(rCol_toggle) begin
-				rAddr[0] <= rAddr[0] + 1;
-				rAddr[1] <= rAddr[1] + 1;
-				rAddr[4] <= rAddr[4] + 1;
-				rAddr[5] <= rAddr[5] + 1;
-				rAddr[8] <= rAddr[8] + 1;
-				rAddr[9] <= rAddr[9] + 1;
-				rAddr[12] <= rAddr[12] + 1;
-				rAddr[13] <= rAddr[13] + 1;
-			end
-			else begin
-				rAddr[2] <= rAddr[2] + 1;
-				rAddr[3] <= rAddr[3] + 1;
-				rAddr[6] <= rAddr[6] + 1;
-				rAddr[7] <= rAddr[7] + 1;
-				rAddr[10] <= rAddr[10] + 1;
-				rAddr[11] <= rAddr[11] + 1;
-				rAddr[14] <= rAddr[14] + 1;
-				rAddr[15] <= rAddr[15] + 1;
-			end
-
-		end
-		else begin
-			rCnt_delay <= rCnt_delay + 1'b1;
-		end
-
 		if(wCol_end) begin
 			rCol <= 0;
 			rRow <= rRow + 1'b1;
+		end
+		else begin
+			if(rCnt_delay == windowDelay)begin
+				rCnt_delay <= 0;
+				rCol <=  rCol + 1;
+				rCol_toggle <= rCol_toggle + 1'b1;//toggle 1bit continuouly adding one 
+	
+				if(rCol_toggle) begin
+					rAddr[0] <= rAddr[0] + 1;
+					rAddr[1] <= rAddr[1] + 1;
+					rAddr[4] <= rAddr[4] + 1;
+					rAddr[5] <= rAddr[5] + 1;
+					rAddr[8] <= rAddr[8] + 1;
+					rAddr[9] <= rAddr[9] + 1;
+					rAddr[12] <= rAddr[12] + 1;
+					rAddr[13] <= rAddr[13] + 1;
+				end
+				else begin
+					rAddr[2] <= rAddr[2] + 1;
+					rAddr[3] <= rAddr[3] + 1;
+					rAddr[6] <= rAddr[6] + 1;
+					rAddr[7] <= rAddr[7] + 1;
+					rAddr[10] <= rAddr[10] + 1;
+					rAddr[11] <= rAddr[11] + 1;
+					rAddr[14] <= rAddr[14] + 1;
+					rAddr[15] <= rAddr[15] + 1;
+				end
+	
+			end
+			else begin
+				rCnt_delay <= rCnt_delay + 1'b1;
+			end
 		end
     end
 end
