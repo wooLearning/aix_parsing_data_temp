@@ -2,7 +2,7 @@ module parsing_top (
 	input clk,
 	input rstn,
 	input iStart,
-	input i_run,
+	//input i_run,
 
 	/*for Test wire*/
 	input [15:0] i_ena,		// enable for write address
@@ -39,7 +39,7 @@ parsing_data_layer00 parsing_dut(
     .clk(clk),
     .rstn(rstn),
 	.iStart(iStart),
-	.i_run(i_run),
+	//.i_run(i_run),
 
 	.oCs(w_oCs), // chip enable
 

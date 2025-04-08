@@ -2,7 +2,8 @@
 
 module parsing_test_tb  ();
 	
-reg clk, rstn, iStart, i_run;
+reg clk, rstn, iStart;
+//i_run;
 
 /*for Test wire*/
 reg [15:0] i_ena;		// enable for write address
@@ -31,7 +32,7 @@ parsing_top parsing_top_uut(
 	.clk(clk),
 	.rstn(rstn),
 	.iStart(iStart),
-	.i_run(i_run),
+	//.i_run(i_run),
 
 	/*for Test wire*/
 	.i_ena(i_ena),	// enable for write address
@@ -73,7 +74,7 @@ initial begin
 	rstn = 1'b1;
 	
 	iStart = 1'b0;
-	i_run = 1'b0;
+	//i_run = 1'b0;
 
 
 	/*bram init*/
@@ -245,7 +246,7 @@ initial begin
 	@(posedge clk);
 	
 	iStart = 1'b1;
-	i_run = 1'b1;
+	//i_run = 1'b1;
 
 end
 

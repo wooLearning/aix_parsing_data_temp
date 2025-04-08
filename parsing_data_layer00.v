@@ -2,7 +2,6 @@ module parsing_data_layer00 (
     input clk,
     input rstn,
 	input iStart,
-	input i_run,
 
 	output[15:0] oCs, // chip enable
 
@@ -68,9 +67,12 @@ localparam ST_IDLE         = 3'b000,
 		   ST_ROW_EVEN     = 3'b011,
 		   ST_ROW_END      = 3'b100;
 
-parameter windowDelay = 5;
+parameter windowDelay = 6;
+parameter ACC_DELAY = 3;//rgb0
+parameter BRAM_DELAY = 2;
+parameter SPLIT_DELAY = windowDelay - ACC_DELAY;
 parameter windowDelayWidth = 3;
-parameter ACC_CNT = 32;
+parameter SPLIT_CNT = 32;
 
 reg[windowDelayWidth - 1:0] rCnt_delay;
 reg rCol_toggle;//2 count
@@ -174,8 +176,8 @@ always @(posedge clk, negedge rstn) begin
 		for(i=0;i<16;i=i+1) begin
 			rAddr[i] <= 9'b0;
 		end
-		rRow_toggle1 <= 1'b0;
-		rRow_toggle2 <= 1'b0;
+		rRow_toggle1 <= 1'b0;//64
+		rRow_toggle2 <= 1'b0;//0 start
 	end
 	else begin
 		case(rCurState)
@@ -249,7 +251,7 @@ always@(posedge clk, negedge rstn) begin
 	   rCnt_delay <= 0;
 	   rCol_toggle <= 0;
     end
-    else if(i_run && (rCurState != ST_IDLE)) begin
+    else if(iStart && (rCurState != ST_IDLE)) begin
         if(rCnt_delay == windowDelay)begin
 			rCnt_delay <= 0;
 			rCol <=  rCol + 1;
@@ -322,7 +324,7 @@ always @(posedge clk, negedge rstn) begin //name
 		r_data[14] <= iData14;
 		r_data[15] <= iData15;	
 
-		if(rCnt_delay != 0) begin
+		if(rCnt_delay > BRAM_DELAY) begin
 			case(rCurState)
 				ST_ROW0: begin
 					if(rCol == 0) begin //if col is 0
@@ -332,7 +334,7 @@ always @(posedge clk, negedge rstn) begin //name
 						for(i=4;i<13;i=i+4) begin
 							r_din[i] <= 8'h0;
 						end
-						if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
+						if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
 							r_din[5] <= r_data[0][rSplit_cnt+:8];
 							r_din[6] <= r_data[1][rSplit_cnt+:8];
 							r_din[7] <= r_data[2][rSplit_cnt+:8];
@@ -350,55 +352,53 @@ always @(posedge clk, negedge rstn) begin //name
 						for(i=0;i<4;i=i+1) begin
 							r_din[i] <= 8'h0;
 						end
-						if(rCnt_delay != 0) begin
-							if(rCol_toggle) begin
-								if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
-									r_din[4] <= r_data[1][rSplit_cnt+:8];
-									r_din[5] <= r_data[2][rSplit_cnt+:8];
-									r_din[6] <= r_data[3][rSplit_cnt+:8];
-									r_din[7] <= r_data[0][rSplit_cnt+:8];
+						if(rCol_toggle) begin
+							if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
+								r_din[4] <= r_data[1][rSplit_cnt+:8];
+								r_din[5] <= r_data[2][rSplit_cnt+:8];
+								r_din[6] <= r_data[3][rSplit_cnt+:8];
+								r_din[7] <= r_data[0][rSplit_cnt+:8];
 
-									r_din[8] <= r_data[5][rSplit_cnt+:8];
-									r_din[9] <= r_data[6][rSplit_cnt+:8];
-									r_din[10] <= r_data[7][rSplit_cnt+:8];
-									r_din[11] <= r_data[4][rSplit_cnt+:8];
+								r_din[8] <= r_data[5][rSplit_cnt+:8];
+								r_din[9] <= r_data[6][rSplit_cnt+:8];
+								r_din[10] <= r_data[7][rSplit_cnt+:8];
+								r_din[11] <= r_data[4][rSplit_cnt+:8];
 
-									r_din[12] <= r_data[9][rSplit_cnt+:8];
-									r_din[13] <= r_data[10][rSplit_cnt+:8];
-									r_din[14] <= r_data[11][rSplit_cnt+:8];
-									r_din[15] <= r_data[8][rSplit_cnt+:8];
+								r_din[12] <= r_data[9][rSplit_cnt+:8];
+								r_din[13] <= r_data[10][rSplit_cnt+:8];
+								r_din[14] <= r_data[11][rSplit_cnt+:8];
+								r_din[15] <= r_data[8][rSplit_cnt+:8];
 
-									rSplit_cnt <= rSplit_cnt + 8;
-								end
-								else rSplit_cnt <= 0;
+								rSplit_cnt <= rSplit_cnt + 8;
 							end
-							else begin
-								if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
-									r_din[4] <= r_data[3][rSplit_cnt+:8];
-									r_din[5] <= r_data[0][rSplit_cnt+:8];
-									r_din[6] <= r_data[1][rSplit_cnt+:8];
-									r_din[7] <= r_data[2][rSplit_cnt+:8];
+							else rSplit_cnt <= 0;
+						end
+						else begin
+							if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
+								r_din[4] <= r_data[3][rSplit_cnt+:8];
+								r_din[5] <= r_data[0][rSplit_cnt+:8];
+								r_din[6] <= r_data[1][rSplit_cnt+:8];
+								r_din[7] <= r_data[2][rSplit_cnt+:8];
 
-									r_din[8] <= r_data[7][rSplit_cnt+:8];
-									r_din[9] <= r_data[4][rSplit_cnt+:8];
-									r_din[10] <= r_data[5][rSplit_cnt+:8];
-									r_din[11] <= r_data[6][rSplit_cnt+:8];
+								r_din[8] <= r_data[7][rSplit_cnt+:8];
+								r_din[9] <= r_data[4][rSplit_cnt+:8];
+								r_din[10] <= r_data[5][rSplit_cnt+:8];
+								r_din[11] <= r_data[6][rSplit_cnt+:8];
 
-									r_din[12] <= r_data[11][rSplit_cnt+:8];
-									r_din[13] <= r_data[8][rSplit_cnt+:8];
-									r_din[14] <= r_data[9][rSplit_cnt+:8];
-									r_din[15] <= r_data[10][rSplit_cnt+:8];
+								r_din[12] <= r_data[11][rSplit_cnt+:8];
+								r_din[13] <= r_data[8][rSplit_cnt+:8];
+								r_din[14] <= r_data[9][rSplit_cnt+:8];
+								r_din[15] <= r_data[10][rSplit_cnt+:8];
 
-									rSplit_cnt <= rSplit_cnt + 8;
-								end
-								else rSplit_cnt <= 0;
+								rSplit_cnt <= rSplit_cnt + 8;
 							end
+							else rSplit_cnt <= 0;
 						end
 					end
 				end
 				ST_ROW_ODD: begin
 					if(rCol == 0) begin //if col is 0
-						if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
+						if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
 							r_din[0] <= 8'b0;
 							r_din[1] <= r_data[4][rSplit_cnt+:8];
 							r_din[2] <= r_data[5][rSplit_cnt+:8];
@@ -425,7 +425,7 @@ always @(posedge clk, negedge rstn) begin //name
 					end
 					else begin //if col is not 0
 						if(rCol_toggle) begin
-							if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
+							if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
 								r_din[0] <= r_data[5][rSplit_cnt+:8];
 								r_din[1] <= r_data[6][rSplit_cnt+:8];
 								r_din[2] <= r_data[7][rSplit_cnt+:8];
@@ -451,7 +451,7 @@ always @(posedge clk, negedge rstn) begin //name
 							else rSplit_cnt <= 0;
 						end
 						else begin
-							if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
+							if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
 								r_din[0] <= r_data[7][rSplit_cnt+:8];
 								r_din[1] <= r_data[4][rSplit_cnt+:8];
 								r_din[2] <= r_data[5][rSplit_cnt+:8];
@@ -480,7 +480,7 @@ always @(posedge clk, negedge rstn) begin //name
 				end
 				ST_ROW_EVEN: begin
 					if(rCol == 0) begin //if col is 0
-						if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
+						if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
 							r_din[0] <= 8'b0;
 							r_din[1] <= r_data[12][rSplit_cnt+:8];
 							r_din[2] <= r_data[13][rSplit_cnt+:8];
@@ -507,7 +507,7 @@ always @(posedge clk, negedge rstn) begin //name
 					end
 					else begin //if col is not 0
 						if(rCol_toggle) begin
-							if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
+							if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
 								r_din[0] <= r_data[13][rSplit_cnt+:8];
 								r_din[1] <= r_data[14][rSplit_cnt+:8];
 								r_din[2] <= r_data[15][rSplit_cnt+:8];
@@ -533,7 +533,7 @@ always @(posedge clk, negedge rstn) begin //name
 							else rSplit_cnt <= 0;
 						end
 						else begin
-							if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
+							if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
 								r_din[0] <= r_data[7][rSplit_cnt+:8];
 								r_din[1] <= r_data[4][rSplit_cnt+:8];
 								r_din[2] <= r_data[5][rSplit_cnt+:8];
@@ -568,7 +568,7 @@ always @(posedge clk, negedge rstn) begin //name
 						for(i=0;i<9;i=i+4) begin//0 4 8
 							r_din[i] <= 8'h0;
 						end
-						if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
+						if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
 							r_din[1] <= r_data[4][rSplit_cnt+:8];
 							r_din[2] <= r_data[5][rSplit_cnt+:8];
 							r_din[3] <= r_data[6][rSplit_cnt+:8];
@@ -591,7 +591,7 @@ always @(posedge clk, negedge rstn) begin //name
 						end
 						if(rCnt_delay != 0) begin
 							if(rCol_toggle) begin
-								if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
+								if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
 									r_din[0] <= r_data[5][rSplit_cnt+:8];
 									r_din[1] <= r_data[6][rSplit_cnt+:8];
 									r_din[2] <= r_data[7][rSplit_cnt+:8];
@@ -612,7 +612,7 @@ always @(posedge clk, negedge rstn) begin //name
 								else rSplit_cnt <= 0;
 							end
 							else begin
-								if(rSplit_cnt < ACC_CNT) begin // 4ea rgb0 slicing 
+								if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
 									r_din[0] <= r_data[4][rSplit_cnt+:8];
 									r_din[1] <= r_data[5][rSplit_cnt+:8];
 									r_din[2] <= r_data[6][rSplit_cnt+:8];
