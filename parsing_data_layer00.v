@@ -58,14 +58,15 @@ module parsing_data_layer00 (
 
 );
 
-localparam MAXCOL = 127;//256/2
+localparam MAXCOL = 128;//256/2 -1
 localparam MAXROW = 127;
 
 localparam ST_IDLE         = 3'b000,
 		   ST_ROW0         = 3'b001,
 		   ST_ROW_ODD      = 3'b010,
 		   ST_ROW_EVEN     = 3'b011,
-		   ST_ROW_END      = 3'b100;
+		   ST_ROW_END      = 3'b100,
+		   ST_COL_END      = 3'b101;//for sync axi this state acess all state except IDLE
 
 parameter windowDelay = 6;
 parameter ACC_DELAY = 3;//rgb0
@@ -73,6 +74,13 @@ parameter BRAM_DELAY = 2;
 parameter SPLIT_DELAY = windowDelay - ACC_DELAY;
 parameter windowDelayWidth = 3;
 parameter SPLIT_CNT = 32;
+
+/*row change Delay*/
+parameter COL_SYNC = 64;
+parameter COL_SYNC_WIDTH = 6;
+
+reg [COL_SYNC_WIDTH-1 :0] rColSyncDelay;
+reg rEndOfColState;
 
 reg[windowDelayWidth - 1:0] rCnt_delay;
 reg rCol_toggle;//2 count
@@ -92,6 +100,8 @@ reg [4:0] rSplit_cnt;
 reg rRow_toggle1;
 reg rRow_toggle2;
 
+reg [1:0] rPrevState;
+
 //-----------------
 /*wire declartion*/
 //----------------
@@ -100,7 +110,8 @@ wire wRow_end;
 
 reg [15:0] wCs;
 
-//-------------------------------------------------
+
+//------------------------------------------------
 // FSM
 //--------------------------------------------------
 always @(posedge clk, negedge rstn) begin
@@ -118,24 +129,36 @@ always @(*) begin
 			else rNxtState <= ST_IDLE;
 		end
 		ST_ROW0: begin
-			if(wCol_end) rNxtState <= ST_ROW_ODD;
+			if(wCol_end) rNxtState <= ST_COL_END;
 			else rNxtState <= ST_ROW0;
 		end
 		ST_ROW_ODD: begin
-			if(wCol_end) rNxtState <= ST_ROW_EVEN;
+			if(wCol_end) rNxtState <= ST_COL_END;
 			else rNxtState <= ST_ROW_ODD;
 		end
 		ST_ROW_EVEN: begin
-			if(wCol_end && wRow_end) 
-				rNxtState <= ST_ROW_END;
-			else if(wCol_end)
-				rNxtState <= ST_ROW_ODD;
-			else
-				rNxtState <= ST_ROW_EVEN;
+			if(wCol_end) rNxtState <= ST_COL_END;
+			else rNxtState <= ST_ROW_EVEN;
 		end
 		ST_ROW_END: begin
-			if(wCol_end) rNxtState <= ST_IDLE;
+			if(wCol_end) rNxtState <= ST_COL_END;
 			else rNxtState <= ST_ROW_END;
+		end
+		ST_COL_END: begin
+			if(rEndOfColState) begin
+				case (rPrevState)
+					2'b00 : rNxtState <= ST_ROW_ODD;
+					2'b01 : rNxtState <= ST_ROW_EVEN;
+					2'b10 : rNxtState <= ST_ROW_ODD;
+					2'b11 : rNxtState <= ST_IDLE;
+				endcase
+				if(wRow_end) begin
+					rNxtState <= ST_ROW_END;
+				end
+			end
+			else begin
+				rNxtState <= ST_COL_END;
+			end
 		end
 		default :
 			rNxtState <= ST_IDLE;
@@ -167,22 +190,21 @@ always @(*) begin
 	
 end
 
-
 integer i;
 ////////////////
-// adressing signal2 adress declare
-//////////////
+// adressing register 
+////////////////
 always @(posedge clk, negedge rstn) begin
 	if(!rstn) begin
 		for(i=0;i<16;i=i+1) begin
-			rAddr[i] <= 9'b0;
+			rAddr[i] <= 9'd0;
 		end
 		rRow_toggle1 <= 1'b0;//64
 		rRow_toggle2 <= 1'b0;//0 start
+		rPrevState <= 2'b0;
 	end
-	else begin
+	else if(iStart && (rCurState != ST_COL_END))begin
 		case(rCurState)
-		
 			ST_ROW0: begin
 				if(wCol_end) begin
 					for(i=4;i<16;i=i+1) begin
@@ -191,11 +213,12 @@ always @(posedge clk, negedge rstn) begin
 					for(i=0;i<4;i=i+1) begin
 						rAddr[i] <= 9'd64;
 					end
+					rPrevState <= 2'b00;
 				end
 			end
 			ST_ROW_ODD: begin
 				if(wCol_end) begin
-
+					rPrevState <= 2'b01;
 					if(rRow_toggle1) begin
 						for(i=0;i<12;i=i+1) begin
 							rAddr[i] <= 9'd0;
@@ -218,7 +241,7 @@ always @(posedge clk, negedge rstn) begin
 			end
 			ST_ROW_EVEN: begin
 				if(wCol_end) begin
-
+					rPrevState <= 2'b10;
 					if(rRow_toggle2) begin
 						for(i=4;i<16;i=i+1) begin
 							rAddr[i] <= 9'd0;
@@ -239,30 +262,15 @@ always @(posedge clk, negedge rstn) begin
 					rRow_toggle2 <= rRow_toggle2 + 1'b1;
 				end
 			end
-				
-    	endcase 
-	end 
-end
-
-//Col row value calculate
-always@(posedge clk, negedge rstn) begin
-    if(!rstn) begin
-       rCol<= 8'b0;
-	   rRow <= 8'b0;
-	   rCnt_delay <= 0;
-	   rCol_toggle <= 0;
-    end
-    else if(iStart && (rCurState != ST_IDLE)) begin
-		if(wCol_end) begin
-			rCol <= 0;
-			rRow <= rRow + 1'b1;
-		end
-		else begin
-			if(rCnt_delay == windowDelay)begin
-				rCnt_delay <= 0;
-				rCol <=  rCol + 1;
-				rCol_toggle <= rCol_toggle + 1'b1;//toggle 1bit continuouly adding one 
-	
+			ST_ROW_END : begin
+				if(wCol_end) begin
+					rPrevState <= 2'b11;
+				end
+			end
+			default: rPrevState <= 2'b00;
+    	endcase
+		if(rCnt_delay == windowDelay)begin
+			if(!(rCol == (MAXCOL -2))) begin
 				if(rCol_toggle) begin
 					rAddr[0] <= rAddr[0] + 1;
 					rAddr[1] <= rAddr[1] + 1;
@@ -283,7 +291,53 @@ always@(posedge clk, negedge rstn) begin
 					rAddr[14] <= rAddr[14] + 1;
 					rAddr[15] <= rAddr[15] + 1;
 				end
-	
+			end
+		end
+	end 
+end
+
+//COL_END STATE delay register 
+always @(posedge clk, negedge rstn) begin
+	if(!rstn) begin
+		rColSyncDelay <= 0;
+		rEndOfColState <= 0;
+	end
+	else if(rCurState == ST_COL_END) begin
+
+		if(rColSyncDelay == COL_SYNC) begin
+			rColSyncDelay <= 0;
+		end
+		else begin
+			rColSyncDelay <= rColSyncDelay + 1;
+		end
+		if(rColSyncDelay == (COL_SYNC - 1)) begin
+			rEndOfColState <= 1'b1;
+		end
+		else begin
+			rEndOfColState <= 0;
+		end
+	end
+end
+
+
+//Col row value calculate
+always@(posedge clk, negedge rstn) begin
+    if(!rstn) begin
+       rCol<= 8'b0;
+	   rRow <= 8'b0;
+	   rCnt_delay <= 0;
+	   rCol_toggle <= 0;
+    end
+    else if(iStart && (rCurState != ST_IDLE && rCurState != ST_COL_END)) begin
+		if(wCol_end) begin
+			rCol <= 0;
+			rRow <= rRow + 1'b1;
+		end
+		else begin
+			if(rCnt_delay == windowDelay)begin
+				rCnt_delay <= 0;
+				rCol <=  rCol + 1;
+				rCol_toggle <= rCol_toggle + 1'b1;//toggle 1bit continuouly adding one 
 			end
 			else begin
 				rCnt_delay <= rCnt_delay + 1'b1;
@@ -307,7 +361,7 @@ always @(posedge clk, negedge rstn) begin //name
 			r_din[i] <= 0;
 		end
 	end
-	else begin
+	else if(iStart && (rCurState != ST_COL_END)) begin
 		
 		r_data[0] <= iData0;
 		r_data[1] <= iData1;
@@ -346,6 +400,27 @@ always @(posedge clk, negedge rstn) begin //name
 							r_din[13] <= r_data[8][rSplit_cnt+:8];
 							r_din[14] <= r_data[9][rSplit_cnt+:8];
 							r_din[15] <= r_data[10][rSplit_cnt+:8];
+							rSplit_cnt <= rSplit_cnt + 8;
+						end
+						else rSplit_cnt <= 0;
+					end
+					else if(rCol == (MAXCOL -1)) begin
+						for(i=0;i<4;i=i+1) begin
+							r_din[i] <= 8'h0;
+						end
+						for(i=7;i<16;i=i+4) begin
+							r_din[i] <= 8'h0;
+						end
+						if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
+							r_din[4] <= r_data[1][rSplit_cnt+:8];
+							r_din[5] <= r_data[2][rSplit_cnt+:8];
+							r_din[6] <= r_data[3][rSplit_cnt+:8];
+							r_din[8] <= r_data[5][rSplit_cnt+:8];
+							r_din[9] <= r_data[6][rSplit_cnt+:8];
+							r_din[10] <= r_data[7][rSplit_cnt+:8];
+							r_din[12] <= r_data[9][rSplit_cnt+:8];
+							r_din[13] <= r_data[10][rSplit_cnt+:8];
+							r_din[14] <= r_data[11][rSplit_cnt+:8];
 							rSplit_cnt <= rSplit_cnt + 8;
 						end
 						else rSplit_cnt <= 0;
@@ -420,6 +495,33 @@ always @(posedge clk, negedge rstn) begin //name
 							r_din[13] <= r_data[0][rSplit_cnt+:8];
 							r_din[14] <= r_data[1][rSplit_cnt+:8];
 							r_din[15] <= r_data[2][rSplit_cnt+:8];
+
+							rSplit_cnt <= rSplit_cnt + 8;
+						end
+						else rSplit_cnt <= 0;
+					end
+					else if(rCol == (MAXCOL -1)) begin
+						if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
+				
+							r_din[0] <= r_data[5][rSplit_cnt+:8];
+							r_din[1] <= r_data[6][rSplit_cnt+:8];
+							r_din[2] <= r_data[7][rSplit_cnt+:8];
+							r_din[3] <= 8'b0;
+
+							r_din[4] <= r_data[9][rSplit_cnt+:8];
+							r_din[5] <= r_data[10][rSplit_cnt+:8];
+							r_din[6] <= r_data[11][rSplit_cnt+:8];
+							r_din[7] <= 8'b0;
+
+							r_din[11] <= 8'b0;
+							r_din[8] <= r_data[13][rSplit_cnt+:8];
+							r_din[9] <= r_data[14][rSplit_cnt+:8];
+							r_din[10] <= r_data[15][rSplit_cnt+:8];
+
+							r_din[15] <= 8'b0;
+							r_din[12] <= r_data[1][rSplit_cnt+:8];
+							r_din[13] <= r_data[2][rSplit_cnt+:8];
+							r_din[14] <= r_data[3][rSplit_cnt+:8];
 
 							rSplit_cnt <= rSplit_cnt + 8;
 						end
@@ -507,6 +609,32 @@ always @(posedge clk, negedge rstn) begin //name
 						end
 						else rSplit_cnt <= 0;
 					end
+					else if(rCol == (MAXCOL -1)) begin
+						if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
+							r_din[3] <= 8'b0;
+							r_din[0] <= r_data[13][rSplit_cnt+:8];
+							r_din[1] <= r_data[14][rSplit_cnt+:8];
+							r_din[2] <= r_data[15][rSplit_cnt+:8];
+
+							r_din[7] <= 8'b0;
+							r_din[4] <= r_data[1][rSplit_cnt+:8];
+							r_din[5] <= r_data[2][rSplit_cnt+:8];
+							r_din[6] <= r_data[3][rSplit_cnt+:8];
+
+							r_din[11] <= 8'b0;
+							r_din[8] <= r_data[5][rSplit_cnt+:8];
+							r_din[9] <= r_data[6][rSplit_cnt+:8];
+							r_din[10] <= r_data[7][rSplit_cnt+:8];
+
+							r_din[15] <= 8'b0;
+							r_din[12] <= r_data[9][rSplit_cnt+:8];
+							r_din[13] <= r_data[10][rSplit_cnt+:8];
+							r_din[14] <= r_data[11][rSplit_cnt+:8];
+
+							rSplit_cnt <= rSplit_cnt + 8;
+						end
+						else rSplit_cnt <= 0;
+					end
 					else begin //if col is not 0
 						if(rCol_toggle) begin
 							if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
@@ -579,10 +707,34 @@ always @(posedge clk, negedge rstn) begin //name
 							r_din[6] <= r_data[9][rSplit_cnt+:8];
 							r_din[7] <= r_data[10][rSplit_cnt+:8];
 
-							r_din[10] <= r_data[12][rSplit_cnt+:8];
-							r_din[11] <= r_data[13][rSplit_cnt+:8];
-							r_din[12] <= r_data[14][rSplit_cnt+:8];
+							r_din[9] <= r_data[12][rSplit_cnt+:8];
+							r_din[10] <= r_data[13][rSplit_cnt+:8];
+							r_din[11] <= r_data[14][rSplit_cnt+:8];
 
+							rSplit_cnt <= rSplit_cnt + 8;
+						end
+						else rSplit_cnt <= 0;
+					end
+					else if(rCol == (MAXCOL -1)) begin
+						if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
+							r_din[0] <= r_data[5][rSplit_cnt+:8];
+							r_din[1] <= r_data[6][rSplit_cnt+:8];
+							r_din[2] <= r_data[7][rSplit_cnt+:8];
+							r_din[3] <= 8'b0;
+							
+							r_din[4] <= r_data[9][rSplit_cnt+:8];
+							r_din[5] <= r_data[10][rSplit_cnt+:8];
+							r_din[6] <= r_data[11][rSplit_cnt+:8];
+							r_din[7] <= 8'b0;
+
+							r_din[8] <= r_data[13][rSplit_cnt+:8];
+							r_din[9] <= r_data[14][rSplit_cnt+:8];
+							r_din[10] <= r_data[15][rSplit_cnt+:8];
+							r_din[11] <= 8'b0;
+							
+							for(i=12;i<16;i=i+1) begin//0 4 8
+								r_din[i] <= 8'h0;
+							end
 							rSplit_cnt <= rSplit_cnt + 8;
 						end
 						else rSplit_cnt <= 0;
@@ -591,7 +743,7 @@ always @(posedge clk, negedge rstn) begin //name
 						for(i=12;i<16;i=i+1) begin
 							r_din[i] <= 8'h0;
 						end
-						if(rCnt_delay != 0) begin
+						//if(rCnt_delay != 0) begin
 							if(rCol_toggle) begin
 								if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
 									r_din[0] <= r_data[5][rSplit_cnt+:8];
@@ -615,32 +767,33 @@ always @(posedge clk, negedge rstn) begin //name
 							end
 							else begin
 								if(rSplit_cnt < SPLIT_CNT) begin // 4ea rgb0 slicing 
-									r_din[0] <= r_data[4][rSplit_cnt+:8];
-									r_din[1] <= r_data[5][rSplit_cnt+:8];
-									r_din[2] <= r_data[6][rSplit_cnt+:8];
-									r_din[3] <= r_data[7][rSplit_cnt+:8];
+									r_din[0] <= r_data[7][rSplit_cnt+:8];
+									r_din[1] <= r_data[4][rSplit_cnt+:8];
+									r_din[2] <= r_data[5][rSplit_cnt+:8];
+									r_din[3] <= r_data[6][rSplit_cnt+:8];
 
-									r_din[4] <= r_data[8][rSplit_cnt+:8];
-									r_din[5] <= r_data[9][rSplit_cnt+:8];
-									r_din[6] <= r_data[10][rSplit_cnt+:8];
-									r_din[7] <= r_data[11][rSplit_cnt+:8];
+									r_din[4] <= r_data[11][rSplit_cnt+:8];
+									r_din[5] <= r_data[8][rSplit_cnt+:8];
+									r_din[6] <= r_data[9][rSplit_cnt+:8];
+									r_din[7] <= r_data[10][rSplit_cnt+:8];
 
-									r_din[8] <= r_data[12][rSplit_cnt+:8];
-									r_din[9] <= r_data[13][rSplit_cnt+:8];
-									r_din[10] <= r_data[14][rSplit_cnt+:8];
-									r_din[11] <= r_data[15][rSplit_cnt+:8];
+									r_din[8] <= r_data[15][rSplit_cnt+:8];
+									r_din[9] <= r_data[12][rSplit_cnt+:8];
+									r_din[10] <= r_data[13][rSplit_cnt+:8];
+									r_din[11] <= r_data[14][rSplit_cnt+:8];
 
 									rSplit_cnt <= rSplit_cnt + 8;
 								end
 								else rSplit_cnt <= 0;
 							end
-						end
+						//end
 					end
 				end
 			endcase
 		end
 	end
 end
+
 
 assign oCs = wCs;
 

@@ -86,8 +86,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'b0;
+		i_dia = 127'h0000_0000;
 	end
+	@(posedge clk);
 
 	i_ena = 16'b0000_0000_0000_0010;
 	i_wea = 16'b0000_0000_0000_0010;
@@ -96,8 +97,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h0101_0101;
+		i_dia = 127'h4131_2111;
 	end
+	@(posedge clk);
 
 	i_ena = 16'b0000_0000_0000_0100;
 	i_wea = 16'b0000_0000_0000_0100;
@@ -106,9 +108,10 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h02020202;
+		i_dia = 127'h42322212;
 	end
 	
+	@(posedge clk);
 	i_ena = 16'b0000_0000_0000_1000;
 	i_wea = 16'b0000_0000_0000_1000;
 	#10;
@@ -116,9 +119,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h03030303;
+		i_dia = 127'h43332313;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b0000_0000_0001_0000;
 	i_wea = 16'b0000_0000_0001_0000;
 	#10;
@@ -126,9 +129,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h04040404;
+		i_dia = 127'h44342414;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b0000_0000_0010_0000;
 	i_wea = 16'b0000_0000_0010_0000;
 	#10;
@@ -136,9 +139,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h05050505;
+		i_dia = 127'h45352515;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b0000_0000_0100_0000;
 	i_wea = 16'b0000_0000_0100_0000;
 	#10;
@@ -146,9 +149,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h06060606;
+		i_dia = 127'h46362616;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b0000_0000_1000_0000;
 	i_wea = 16'b0000_0000_1000_0000;
 	#10;
@@ -156,9 +159,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h07070707;
+		i_dia = 127'h47372717;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b0000_0001_0000_0000;
 	i_wea = 16'b0000_0001_0000_0000;
 	#10;
@@ -166,9 +169,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h08080808;
+		i_dia = 127'h48382818;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b0000_0010_0000_0000;
 	i_wea = 16'b0000_0010_0000_0000;
 	#10;
@@ -176,9 +179,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h09090909;
+		i_dia = 127'h49392919;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b0000_0100_0000_0000;
 	i_wea = 16'b0000_0100_0000_0000;
 	#10;
@@ -186,9 +189,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h0A0A0A0A;
+		i_dia = 127'h4A3A2A1A;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b0000_1000_0000_0000;
 	i_wea = 16'b0000_1000_0000_0000;
 	#10;
@@ -196,9 +199,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h0B0B0B0B;
+		i_dia = 127'h4B3B2B1B;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b0001_0000_0000_0000;
 	i_wea = 16'b0001_0000_0000_0000;
 	#10;
@@ -206,9 +209,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h0C0C0C0C;
+		i_dia = 127'h4C3C2C1C;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b0010_0000_0000_0000;
 	i_wea = 16'b0010_0000_0000_0000;
 	#10;
@@ -216,9 +219,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h0D0D0D0D;
+		i_dia = 127'h4D3D2D1D;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b0100_0000_0000_0000;
 	i_wea = 16'b0100_0000_0000_0000;
 	#10;
@@ -226,9 +229,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h0E0E0E0E;
+		i_dia = 127'h4E3E2E1E;
 	end
-
+	@(posedge clk);
 	i_ena = 16'b1000_0000_0000_0000;
 	i_wea = 16'b1000_0000_0000_0000;
 	#10;
@@ -236,9 +239,9 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h0F0F0F0F;
+		i_dia = 127'h4F3F2F1F;
 	end
-
+	@(posedge clk);
 
 	#(CLK_PERIOD*10);
 	i_ena = 16'h0;
