@@ -1,13 +1,37 @@
 `timescale 1ns / 1ps
 
 module mac(
-input clk, 
-input rstn, 
-input vld_i, 
-input [127:0] win, 
-input [127:0] din,
-output[ 19:0] acc_o, 
-output        vld_o
+    input clk, 
+    input rstn, 
+    input vld_i, //parsing data랑 타이밍 보고 거기서 신호 뽑아줘야할 듯
+
+    input [7:0] iDin0,
+	input [7:0] iDin1,
+	input [7:0] iDin2,
+	input [7:0] iDin3,
+	input [7:0] iDin4,
+	input [7:0] iDin5,
+	input [7:0] iDin6,
+	input [7:0] iDin7,
+	input [7:0] iDin8,
+	input [7:0] iDin9,
+	input [7:0] iDin10,
+	input [7:0] iDin11,
+	input [7:0] iDin12,
+	input [7:0] iDin13,
+	input [7:0] iDin14,
+	input [7:0] iDin15,
+
+	input [7:0] iWeight0,
+	input [7:0] iWeight1,
+	input [7:0] iWeight2,
+	input [7:0] iWeight3,
+	input [7:0] iWeight4,
+	input [7:0] iWeight5,
+	input [7:0] iWeight6,
+	input [7:0] iWeight7,
+
+    output[7:0] oOut
 );
 
 reg vld_i_d0, vld_i_d1, vld_i_d2, vld_i_d3, vld_i_d4;
@@ -218,7 +242,7 @@ end
 
 
 wire[19:0] w_acc_o[0:3];
-wire w_vld_o;
+wire w_vld_o;//input timing 생각해야함
 //----------------------------------------------------------------------
 // Adder tree
 //----------------------------------------------------------------------
@@ -289,5 +313,71 @@ adder_tree u_adder_tree3(
 ./*output[19:0] */acc_o(w_acc_o[3]),
 ./*output       */vld_o(w_vld_o) 
 );
+
+
+
+//-----------------
+// Delays
+//-----------------
+reg rD1, rD2, rD3, rD4;
+wire wAccDelay = rD1 || rD2 || rD3 || rD4;
+always@(posedge clk, negedge rstn) begin
+	if(!rstn) begin
+		rD1 <= 0;
+		rD2 <= 0;
+		rD3 <= 0;
+		rD4 <= 0;
+	end
+	else begin 
+		rD1 <= w_vld_o;
+		rD2 <= rD1;
+		rD3 <= rD2;
+		rD4 <= rD3;	
+	end
+end
+
+integer i;
+/*accumulator*/
+reg [31:0] r_acc[0:3];
+always @(posedge clk, negedge rstn) begin
+    if(!rstn) begin
+        for(i=0;i<4;i=i+1)begin
+            r_acc[i] <= 32'b0;
+        end
+    end
+    else if(wAccDelay) begin
+        for(i=0;i<4;i=i+1)begin
+            r_acc[i] <= r_acc + w_acc_o[i];
+        end
+    end
+    else begin
+        for(i=0;i<4;i=i+1)begin
+            r_acc[i] <= 32'b0;
+        end
+    end
+end
+
+// Activation + Quantization (Descaling)
+//enable signal 정의 아직 안함
+wire [31:0] wSum_act[0:3];
+wSum_act[0] = (D4) ? ((r_acc[0][31]==1)?0:r_acc[0]): 0;
+wSum_act[1] = (D4) ? ((r_acc[1][31]==1)?0:r_acc[1]): 0;
+wSum_act[2] = (D4) ? ((r_acc[2][31]==1)?0:r_acc[2]): 0;
+wSum_act[3] = (D4) ? ((r_acc[3][31]==1)?0:r_acc[3]): 0;
+
+wire [7:0] wDes[0:3];
+wDes[0] = (D4) ? ((wSum_act[0][31:7]>255)?255:wSum_act[0][14:7]):0; // Descaling: * 1/2^11	
+wDes[1] = (D4) ? ((wSum_act[1][31:7]>255)?255:wSum_act[1][14:7]):0; // Descaling: * 1/2^11	
+wDes[2] = (D4) ? ((wSum_act[2][31:7]>255)?255:wSum_act[2][14:7]):0; // Descaling: * 1/2^11	
+wDes[3] = (D4) ? ((wSum_act[3][31:7]>255)?255:wSum_act[3][14:7]):0; // Descaling: * 1/2^11
+
+/*max pooling*/
+wire [7:0] wMax0, wMax1, wMaxFinal;
+
+assign wMax0 = (wDes[0] > wDes[1]) ? wDes[0] : wDes[1];
+assign wMax1 = (wDes[2] > wDes[3]) ? wDes[2] : wDes[3];
+assign oOut = (wMax0 > wMax1) ? wMax0 : wMax1;
+
+
 
 endmodule

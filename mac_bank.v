@@ -1,4 +1,4 @@
-module mac_bank (
+module mac_bank (//this is weird code, you don't have to read this code
 
 	input clk,
 	input rstn,
