@@ -13,13 +13,6 @@ input [15:0] mul_05,
 input [15:0] mul_06, 
 input [15:0] mul_07,
 input [15:0] mul_08, 
-input [15:0] mul_09, 
-input [15:0] mul_10, 
-input [15:0] mul_11,
-input [15:0] mul_12, 
-input [15:0] mul_13, 
-input [15:0] mul_14, 
-input [15:0] mul_15,
 output[19:0] acc_o,
 output       vld_o 
 );
@@ -33,14 +26,10 @@ reg [16:0] y1_1;
 reg [16:0] y1_2;
 reg [16:0] y1_3;
 reg [16:0] y1_4;
-reg [16:0] y1_5;
-reg [16:0] y1_6;
-reg [16:0] y1_7;
 // Level 2
 reg [17:0] y2_0;
 reg [17:0] y2_1;
 reg [17:0] y2_2;
-reg [17:0] y2_3;
 // Level 3
 reg [18:0] y3_0;
 reg [18:0] y3_1;
@@ -48,6 +37,7 @@ reg [18:0] y3_1;
 reg [19:0] y4;
 // Delays
 reg vld_i_d1, vld_i_d2, vld_i_d3, vld_i_d4;
+
 //-------------------------------------------------
 // Reduction tree
 //-------------------------------------------------
@@ -59,19 +49,13 @@ always@(posedge clk, negedge rstn) begin
 		y1_2 <= 17'd0;
 		y1_3 <= 17'd0;
 		y1_4 <= 17'd0;
-		y1_5 <= 17'd0;
-		y1_6 <= 17'd0;
-		y1_7 <= 17'd0;	
 	end
 	else begin 
 		y1_0 <= $signed(mul_00) + $signed(mul_01);
 		y1_1 <= $signed(mul_02) + $signed(mul_03);
 		y1_2 <= $signed(mul_04) + $signed(mul_05);
 		y1_3 <= $signed(mul_06) + $signed(mul_07);
-		y1_4 <= $signed(mul_08) + $signed(mul_09);
-		y1_5 <= $signed(mul_10) + $signed(mul_11);
-		y1_6 <= $signed(mul_12) + $signed(mul_13);
-		y1_7 <= $signed(mul_14) + $signed(mul_15);		
+		y1_4 <= $signed(mul_08);	
 	end
 end
 
@@ -81,13 +65,11 @@ always@(posedge clk, negedge rstn) begin
 		y2_0 <= 18'd0;
 		y2_1 <= 18'd0;
 		y2_2 <= 18'd0;
-		y2_3 <= 18'd0;	
 	end
 	else begin 
 		y2_0 <= $signed(y1_0) + $signed(y1_1);
 		y2_1 <= $signed(y1_2) + $signed(y1_3);
-		y2_2 <= $signed(y1_4) + $signed(y1_5);
-		y2_3 <= $signed(y1_6) + $signed(y1_7);	
+		y2_2 <= $signed(y1_4);
 	end
 end
 
@@ -99,7 +81,7 @@ always@(posedge clk, negedge rstn) begin
 	end
 	else begin 
 		y3_0 <= $signed(y2_0) + $signed(y2_1);
-		y3_1 <= $signed(y2_2) + $signed(y2_3);
+		y3_1 <= $signed(y2_2);
 	end
 end
 // Level 4

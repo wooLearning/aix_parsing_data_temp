@@ -10,30 +10,12 @@ output[ 19:0] acc_o,
 output        vld_o
 );
 
-//----------------------------------------------------------------------
-// Signals
-//----------------------------------------------------------------------
-wire[15:0] y00;
-wire[15:0] y01;
-wire[15:0] y02;
-wire[15:0] y03;
-wire[15:0] y04;
-wire[15:0] y05;
-wire[15:0] y06;
-wire[15:0] y07;
-wire[15:0] y08;
-wire[15:0] y09;
-wire[15:0] y10;
-wire[15:0] y11;
-wire[15:0] y12;
-wire[15:0] y13;
-wire[15:0] y14;
-wire[15:0] y15;
-
 reg vld_i_d0, vld_i_d1, vld_i_d2, vld_i_d3, vld_i_d4;
+
 //----------------------------------------------------------------------
 // Components: Array of multipliers
 //----------------------------------------------------------------------
+
 ////////////
 /*weight0*/
 ///////////
@@ -233,30 +215,79 @@ always@(posedge clk, negedge rstn) begin
 		vld_i_d4 <= vld_i_d3;	
 	end
 end
+
+
+wire[19:0] w_acc_o[0:3];
+wire w_vld_o;
 //----------------------------------------------------------------------
 // Adder tree
 //----------------------------------------------------------------------
-adder_tree u_adder_tree(
+adder_tree u_adder_tree0(
 ./*input 		*/clk(clk), 
 ./*input 		*/rstn(rstn),
 ./*input 		*/vld_i(vld_i_d4),
-./*input [15:0] */mul_00(y00), 
-./*input [15:0] */mul_01(y01), 
-./*input [15:0] */mul_02(y02), 
-./*input [15:0] */mul_03(y03), 
-./*input [15:0] */mul_04(y04), 
-./*input [15:0] */mul_05(y05), 
-./*input [15:0] */mul_06(y06), 
-./*input [15:0] */mul_07(y07),
-./*input [15:0] */mul_08(y08), 
-./*input [15:0] */mul_09(y09), 
-./*input [15:0] */mul_10(y10), 
-./*input [15:0] */mul_11(y11),
-./*input [15:0] */mul_12(y12), 
-./*input [15:0] */mul_13(y13), 
-./*input [15:0] */mul_14(y14), 
-./*input [15:0] */mul_15(y15),
-./*output[19:0] */acc_o(acc_o),
-./*output       */vld_o(vld_o) 
+./*input [15:0] */mul_00(wmul_out0[0]), 
+./*input [15:0] */mul_01(wmul_out0[1]), 
+./*input [15:0] */mul_02(wmul_out0[2]), 
+./*input [15:0] */mul_03(wmul_out0[3]), 
+./*input [15:0] */mul_04(wmul_out0[4]), 
+./*input [15:0] */mul_05(wmul_out0[5]), 
+./*input [15:0] */mul_06(wmul_out0[6]), 
+./*input [15:0] */mul_07(wmul_out0[7]),
+./*input [15:0] */mul_08(wmul_out0[8]), 
+./*output[19:0] */acc_o(w_acc_o[0]),
+./*output       */vld_o(w_vld_o) 
 );
+
+adder_tree u_adder_tree1(
+./*input 		*/clk(clk), 
+./*input 		*/rstn(rstn),
+./*input 		*/vld_i(vld_i_d4),
+./*input [15:0] */mul_00(wmul_out1[0]), 
+./*input [15:0] */mul_01(wmul_out1[1]), 
+./*input [15:0] */mul_02(wmul_out1[2]), 
+./*input [15:0] */mul_03(wmul_out1[3]), 
+./*input [15:0] */mul_04(wmul_out1[4]), 
+./*input [15:0] */mul_05(wmul_out1[5]), 
+./*input [15:0] */mul_06(wmul_out1[6]), 
+./*input [15:0] */mul_07(wmul_out1[7]),
+./*input [15:0] */mul_08(wmul_out1[8]), 
+./*output[19:0] */acc_o(w_acc_o[1]),
+./*output       */vld_o(w_vld_o) 
+);
+
+adder_tree u_adder_tree2(
+./*input 		*/clk(clk), 
+./*input 		*/rstn(rstn),
+./*input 		*/vld_i(vld_i_d4),
+./*input [15:0] */mul_00(wmul_out2[0]), 
+./*input [15:0] */mul_01(wmul_out2[1]), 
+./*input [15:0] */mul_02(wmul_out2[2]), 
+./*input [15:0] */mul_03(wmul_out2[3]), 
+./*input [15:0] */mul_04(wmul_out2[4]), 
+./*input [15:0] */mul_05(wmul_out2[5]), 
+./*input [15:0] */mul_06(wmul_out2[6]), 
+./*input [15:0] */mul_07(wmul_out2[7]),
+./*input [15:0] */mul_08(wmul_out2[8]), 
+./*output[19:0] */acc_o(w_acc_o[2]),
+./*output       */vld_o(w_vld_o) 
+);
+
+adder_tree u_adder_tree3(
+./*input 		*/clk(clk), 
+./*input 		*/rstn(rstn),
+./*input 		*/vld_i(vld_i_d4),
+./*input [15:0] */mul_00(wmul_out3[0]), 
+./*input [15:0] */mul_01(wmul_out3[1]), 
+./*input [15:0] */mul_02(wmul_out3[2]), 
+./*input [15:0] */mul_03(wmul_out3[3]), 
+./*input [15:0] */mul_04(wmul_out3[4]), 
+./*input [15:0] */mul_05(wmul_out3[5]), 
+./*input [15:0] */mul_06(wmul_out3[6]), 
+./*input [15:0] */mul_07(wmul_out3[7]),
+./*input [15:0] */mul_08(wmul_out3[8]), 
+./*output[19:0] */acc_o(w_acc_o[3]),
+./*output       */vld_o(w_vld_o) 
+);
+
 endmodule
