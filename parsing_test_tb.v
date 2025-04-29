@@ -86,7 +86,7 @@ initial begin
 	for(i = 0; i< 128; i = i + 1) begin
 		@(posedge clk);
 		i_addra = i;
-		i_dia = 127'h0000_0000;
+		i_dia = 127'h4030_2010;
 	end
 	@(posedge clk);
 
