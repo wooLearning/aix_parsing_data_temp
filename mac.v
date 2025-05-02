@@ -30,9 +30,16 @@ module mac(
 	input [7:0] iWeight5,
 	input [7:0] iWeight6,
 	input [7:0] iWeight7,
+    input [7:0] iWeight8,
 
     output[7:0] oOut
 );
+
+wire [15:0] wmul_out0[0:8];
+wire [15:0] wmul_out1[0:8];
+wire [15:0] wmul_out2[0:8];
+wire [15:0] wmul_out3[0:8];
+
 
 reg vld_i_d0, vld_i_d1, vld_i_d2, vld_i_d3, vld_i_d4;
 
@@ -241,6 +248,7 @@ always@(posedge clk, negedge rstn) begin
 end
 
 
+
 wire[19:0] w_acc_o[0:3];
 wire w_vld_o;//input timing 생각해야함
 //----------------------------------------------------------------------
@@ -347,7 +355,7 @@ always @(posedge clk, negedge rstn) begin
     end
     else if(wAccDelay) begin
         for(i=0;i<4;i=i+1)begin
-            r_acc[i] <= r_acc + w_acc_o[i];
+            r_acc[i] <= r_acc[i] + w_acc_o[i];
         end
     end
     else begin
@@ -360,19 +368,19 @@ end
 // Activation + Quantization (Descaling)
 //enable signal 정의 아직 안함
 wire [31:0] wSum_act[0:3];
-wSum_act[0] = (D4) ? ((r_acc[0][31]==1)?0:r_acc[0]): 0;
-wSum_act[1] = (D4) ? ((r_acc[1][31]==1)?0:r_acc[1]): 0;
-wSum_act[2] = (D4) ? ((r_acc[2][31]==1)?0:r_acc[2]): 0;
-wSum_act[3] = (D4) ? ((r_acc[3][31]==1)?0:r_acc[3]): 0;
+assign wSum_act[0] = (rD4) ? ((r_acc[0][31]==1)?0:r_acc[0]): 0;
+assign wSum_act[1] = (rD4) ? ((r_acc[1][31]==1)?0:r_acc[1]): 0;
+assign wSum_act[2] = (rD4) ? ((r_acc[2][31]==1)?0:r_acc[2]): 0;
+assign wSum_act[3] = (rD4) ? ((r_acc[3][31]==1)?0:r_acc[3]): 0;
 
 wire [7:0] wDes[0:3];
-wDes[0] = (D4) ? ((wSum_act[0][31:7]>255)?255:wSum_act[0][14:7]):0; // Descaling: * 1/2^11	
-wDes[1] = (D4) ? ((wSum_act[1][31:7]>255)?255:wSum_act[1][14:7]):0; // Descaling: * 1/2^11	
-wDes[2] = (D4) ? ((wSum_act[2][31:7]>255)?255:wSum_act[2][14:7]):0; // Descaling: * 1/2^11	
-wDes[3] = (D4) ? ((wSum_act[3][31:7]>255)?255:wSum_act[3][14:7]):0; // Descaling: * 1/2^11
+assign wDes[0] = (rD4) ? ((wSum_act[0][31:7]>255)?255:wSum_act[0][14:7]):0; // Descaling: * 1/2^11	
+assign wDes[1] = (rD4) ? ((wSum_act[1][31:7]>255)?255:wSum_act[1][14:7]):0; // Descaling: * 1/2^11	
+assign wDes[2] = (rD4) ? ((wSum_act[2][31:7]>255)?255:wSum_act[2][14:7]):0; // Descaling: * 1/2^11	
+assign wDes[3] = (rD4) ? ((wSum_act[3][31:7]>255)?255:wSum_act[3][14:7]):0; // Descaling: * 1/2^11
 
 /*max pooling*/
-wire [7:0] wMax0, wMax1, wMaxFinal;
+wire [7:0] wMax0, wMax1;
 
 assign wMax0 = (wDes[0] > wDes[1]) ? wDes[0] : wDes[1];
 assign wMax1 = (wDes[2] > wDes[3]) ? wDes[2] : wDes[3];

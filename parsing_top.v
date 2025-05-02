@@ -26,7 +26,9 @@ module parsing_top (
 	output [7:0] oDin12,
 	output [7:0] oDin13,
 	output [7:0] oDin14,
-	output [7:0] oDin15
+	output [7:0] oDin15,
+
+	output oMac_vld// mac에 이 신호 전달에서 mul 시작
 );
 	
 wire [15:0] w_oCs;
@@ -92,8 +94,8 @@ parsing_data_layer00 parsing_dut(
 	.oDin12(w_oDin[12]),
 	.oDin13(w_oDin[13]),
 	.oDin14(w_oDin[14]),
-	.oDin15(w_oDin[15])
-
+	.oDin15(w_oDin[15]),
+	.oMac_vld(oMac_vld)
 );
 
 dpram_wrapper #(.DW(128), .AW(9), .DEPTH(512))

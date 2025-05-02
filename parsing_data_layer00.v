@@ -54,8 +54,9 @@ module parsing_data_layer00 (
 	output [7:0] oDin12,
 	output [7:0] oDin13,
 	output [7:0] oDin14,
-	output [7:0] oDin15
+	output [7:0] oDin15,
 
+	output oMac_vld
 );
 
 localparam MAXCOL = 128;//256/2 -1
@@ -68,21 +69,23 @@ localparam ST_IDLE         = 3'b000,
 		   ST_ROW_END      = 3'b100,
 		   ST_COL_END      = 3'b101;//for sync axi this state acess all state except IDLE
 
-parameter windowDelay = 6;
-parameter ACC_DELAY = 3;//rgb0
-parameter BRAM_DELAY = 2;
+		   
+parameter windowDelay = 20;//rcnt increase until this value
+parameter windowDelayWidth = 5;//rcnt adding log2(windowDelay))+1
 parameter SPLIT_DELAY = windowDelay - ACC_DELAY;
-parameter windowDelayWidth = 3;
+parameter ACC_DELAY = 4;
 parameter SPLIT_CNT = 32;
 
 /*row change Delay*/
-parameter COL_SYNC = 64;
-parameter COL_SYNC_WIDTH = 6;
+parameter COL_SYNC = 63;//row change => delay clock
+parameter COL_SYNC_WIDTH = 7;//log2(COL_SYNC) + 1
+
+reg[windowDelayWidth - 1:0] rCnt_delay;
 
 reg [COL_SYNC_WIDTH-1 :0] rColSyncDelay;
 reg rEndOfColState;
 
-reg[windowDelayWidth - 1:0] rCnt_delay;
+
 reg rCol_toggle;//2 count
 
 reg [2:0] rCurState;
@@ -380,7 +383,7 @@ always @(posedge clk, negedge rstn) begin //name
 		r_data[14] <= iData14;
 		r_data[15] <= iData15;	
 
-		if(rCnt_delay > BRAM_DELAY) begin
+		if(rCnt_delay > SPLIT_DELAY) begin
 			case(rCurState)
 				ST_ROW0: begin
 					if(rCol == 0) begin //if col is 0
@@ -796,6 +799,7 @@ end
 
 
 assign oCs = wCs;
+assign oMac_vld = (rCnt_delay > SPLIT_DELAY)? 1'b1 : 1'b0;//starting split 
 
 assign oAddr0 = rAddr[0];
 assign oAddr1 = rAddr[1];
