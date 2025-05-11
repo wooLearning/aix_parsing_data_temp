@@ -1,0 +1,1064 @@
+module parsing_data_layer04 (
+    input clk,
+    input rstn,
+	input iStart,
+
+	output[15:0] oCs, // chip enable
+
+	output[8:0] oAddr0,
+	output[8:0] oAddr1,
+	output[8:0] oAddr2,
+	output[8:0] oAddr3,
+	output[8:0] oAddr4,
+	output[8:0] oAddr5,
+	output[8:0] oAddr6,
+	output[8:0] oAddr7,
+	output[8:0] oAddr8,
+	output[8:0] oAddr9,
+	output[8:0] oAddr10,
+	output[8:0] oAddr11,
+	output[8:0] oAddr12,
+	output[8:0] oAddr13,
+	output[8:0] oAddr14,
+	output[8:0] oAddr15,
+
+	input [127:0] iData0, //from bram data
+	input [127:0] iData1,
+	input [127:0] iData2,
+	input [127:0] iData3,
+	input [127:0] iData4,
+	input [127:0] iData5,
+	input [127:0] iData6,
+	input [127:0] iData7,
+	input [127:0] iData8,
+	input [127:0] iData9,
+	input [127:0] iData10,
+	input [127:0] iData11,
+	input [127:0] iData12,
+	input [127:0] iData13,
+	input [127:0] iData14,
+	input [127:0] iData15,
+
+	output [7:0] oDin0_0,
+	output [7:0] oDin0_1,
+	output [7:0] oDin0_2,
+	output [7:0] oDin0_3,
+	output [7:0] oDin0_4,
+	output [7:0] oDin0_5,
+	output [7:0] oDin0_6,
+	output [7:0] oDin0_7,
+	output [7:0] oDin0_8,
+	output [7:0] oDin0_9,
+	output [7:0] oDin0_10,
+	output [7:0] oDin0_11,
+	output [7:0] oDin0_12,
+	output [7:0] oDin0_13,
+	output [7:0] oDin0_14,
+	output [7:0] oDin0_15,
+
+	output [7:0] oDin1_0,
+	output [7:0] oDin1_1,
+	output [7:0] oDin1_2,
+	output [7:0] oDin1_3,
+	output [7:0] oDin1_4,
+	output [7:0] oDin1_5,
+	output [7:0] oDin1_6,
+	output [7:0] oDin1_7,
+	output [7:0] oDin1_8,
+	output [7:0] oDin1_9,
+	output [7:0] oDin1_10,
+	output [7:0] oDin1_11,
+	output [7:0] oDin1_12,
+	output [7:0] oDin1_13,
+	output [7:0] oDin1_14,
+	output [7:0] oDin1_15,
+
+	output [7:0] oDin2_0,
+	output [7:0] oDin2_1,
+	output [7:0] oDin2_2,
+	output [7:0] oDin2_3,
+	output [7:0] oDin2_4,
+	output [7:0] oDin2_5,
+	output [7:0] oDin2_6,
+	output [7:0] oDin2_7,
+	output [7:0] oDin2_8,
+	output [7:0] oDin2_9,
+	output [7:0] oDin2_10,
+	output [7:0] oDin2_11,
+	output [7:0] oDin2_12,
+	output [7:0] oDin2_13,
+	output [7:0] oDin2_14,
+	output [7:0] oDin2_15,
+
+	output [7:0] oDin3_0,
+	output [7:0] oDin3_1,
+	output [7:0] oDin3_2,
+	output [7:0] oDin3_3,
+	output [7:0] oDin3_4,
+	output [7:0] oDin3_5,
+	output [7:0] oDin3_6,
+	output [7:0] oDin3_7,
+	output [7:0] oDin3_8,
+	output [7:0] oDin3_9,
+	output [7:0] oDin3_10,
+	output [7:0] oDin3_11,
+	output [7:0] oDin3_12,
+	output [7:0] oDin3_13,
+	output [7:0] oDin3_14,
+	output [7:0] oDin3_15,
+
+	output [7:0] oDin4_0,
+	output [7:0] oDin4_1,
+	output [7:0] oDin4_2,
+	output [7:0] oDin4_3,
+	output [7:0] oDin4_4,
+	output [7:0] oDin4_5,
+	output [7:0] oDin4_6,
+	output [7:0] oDin4_7,
+	output [7:0] oDin4_8,
+	output [7:0] oDin4_9,
+	output [7:0] oDin4_10,
+	output [7:0] oDin4_11,
+	output [7:0] oDin4_12,
+	output [7:0] oDin4_13,
+	output [7:0] oDin4_14,
+	output [7:0] oDin4_15,
+
+	output [7:0] oDin5_0,
+	output [7:0] oDin5_1,
+	output [7:0] oDin5_2,
+	output [7:0] oDin5_3,
+	output [7:0] oDin5_4,
+	output [7:0] oDin5_5,
+	output [7:0] oDin5_6,
+	output [7:0] oDin5_7,
+	output [7:0] oDin5_8,
+	output [7:0] oDin5_9,
+	output [7:0] oDin5_10,
+	output [7:0] oDin5_11,
+	output [7:0] oDin5_12,
+	output [7:0] oDin5_13,
+	output [7:0] oDin5_14,
+	output [7:0] oDin5_15,
+
+	output [7:0] oDin6_0,
+	output [7:0] oDin6_1,
+	output [7:0] oDin6_2,
+	output [7:0] oDin6_3,
+	output [7:0] oDin6_4,
+	output [7:0] oDin6_5,
+	output [7:0] oDin6_6,
+	output [7:0] oDin6_7,
+	output [7:0] oDin6_8,
+	output [7:0] oDin6_9,
+	output [7:0] oDin6_10,
+	output [7:0] oDin6_11,
+	output [7:0] oDin6_12,
+	output [7:0] oDin6_13,
+	output [7:0] oDin6_14,
+	output [7:0] oDin6_15,
+
+	output [7:0] oDin7_0,
+	output [7:0] oDin7_1,
+	output [7:0] oDin7_2,
+	output [7:0] oDin7_3,
+	output [7:0] oDin7_4,
+	output [7:0] oDin7_5,
+	output [7:0] oDin7_6,
+	output [7:0] oDin7_7,
+	output [7:0] oDin7_8,
+	output [7:0] oDin7_9,
+	output [7:0] oDin7_10,
+	output [7:0] oDin7_11,
+	output [7:0] oDin7_12,
+	output [7:0] oDin7_13,
+	output [7:0] oDin7_14,
+	output [7:0] oDin7_15,
+
+	output oMac_vld
+);
+
+localparam MAXCOL = 32;//256/2 -1
+localparam MAXROW = 31;
+
+localparam ST_IDLE         = 3'b000,
+		   ST_ROW0         = 3'b001,
+		   ST_ROW_ODD      = 3'b010,
+		   ST_ROW_EVEN     = 3'b011,
+		   ST_ROW_END      = 3'b100,
+		   ST_COL_END      = 3'b101;//for sync axi this state acess all state except IDLE
+
+		   
+parameter windowDelay = 60;//rcnt increase until this value
+parameter windowDelayWidth = 5;//rcnt adding log2(windowDelay))+1
+parameter ACC_NUM = 2;
+parameter ACC_DELAY = windowDelay / ACC_NUM;
+parameter ACC_DELAY_2 = ACC_DELAY/2;
+
+parameter DATA_WIDTH = 128;
+/*row change Delay*/
+parameter COL_SYNC = 63;//row change => delay clock
+parameter COL_SYNC_WIDTH = 7;//log2(COL_SYNC) + 1
+
+reg[windowDelayWidth - 1:0] rCnt_delay;
+
+reg [COL_SYNC_WIDTH-1 :0] rColSyncDelay;
+reg rEndOfColState;
+
+
+reg rCol_toggle;//2 count
+
+reg [2:0] rCurState;
+reg [2:0] rNxtState;
+
+reg [7:0] rRow, rCol;
+
+reg [8:0] rAddr[0:15];
+
+reg [127:0] r_data[0:15];
+
+reg rRow_toggle1;
+reg rRow_toggle2;
+
+reg [1:0] rPrevState;
+
+//-----------------
+/*wire declartion*/
+//----------------
+wire wCol_end;
+wire wRow_end;
+
+reg [15:0] wCs;
+
+reg [DATA_WIDTH-1:0] woDin[0:15];
+
+//------------------------------------------------
+// FSM
+//--------------------------------------------------
+always @(posedge clk, negedge rstn) begin
+    if(!rstn) begin
+       rCurState <= ST_IDLE;
+    end
+    else begin
+        rCurState <= rNxtState;
+    end
+end
+always @(*) begin
+    case(rCurState)
+		ST_IDLE: begin
+			if(iStart == 1'b1) rNxtState <= ST_ROW0;
+			else rNxtState <= ST_IDLE;
+		end
+		ST_ROW0: begin
+			if(wCol_end) rNxtState <= ST_COL_END;
+			else rNxtState <= ST_ROW0;
+		end
+		ST_ROW_ODD: begin
+			if(wCol_end) rNxtState <= ST_COL_END;
+			else rNxtState <= ST_ROW_ODD;
+		end
+		ST_ROW_EVEN: begin
+			if(wCol_end) rNxtState <= ST_COL_END;
+			else rNxtState <= ST_ROW_EVEN;
+		end
+		ST_ROW_END: begin
+			if(wCol_end) rNxtState <= ST_COL_END;
+			else rNxtState <= ST_ROW_END;
+		end
+		ST_COL_END: begin
+			if(rEndOfColState) begin
+				case (rPrevState)
+					2'b00 : rNxtState <= ST_ROW_ODD;
+					2'b01 : rNxtState <= ST_ROW_EVEN;
+					2'b10 : rNxtState <= ST_ROW_ODD;
+					2'b11 : rNxtState <= ST_IDLE;
+				endcase
+				if(wRow_end) begin
+					rNxtState <= ST_ROW_END;
+				end
+			end
+			else begin
+				rNxtState <= ST_COL_END;
+			end
+		end
+		default :
+			rNxtState <= ST_IDLE;
+    endcase            
+end
+
+////////////////
+/* adressing signal1 chip select lsb = 0bram msb = 15bram*/ 
+//////////////
+always @(*) begin
+	case(rCurState)
+	ST_ROW0: begin
+		if(rCol == 0) wCs = 16'b0000_0111_0111_0111;
+		else wCs = 16'h0fff; 
+	end
+	ST_ROW_ODD: begin
+		if(rCol == 0) wCs = 16'b0111_0111_0111_0111;
+		else wCs = 16'hffff; 
+	end
+	ST_ROW_EVEN: begin
+		if(rCol == 0) wCs = 16'b0111_0111_0111_0111;
+		else wCs = 16'hffff; 
+	end
+	ST_ROW_END: begin
+		if(rCol == 0) wCs = 16'b0111_0111_0111_0000;
+		else wCs = 16'hfff0; 
+	end
+	endcase  
+	
+end
+
+integer i;
+////////////////
+// adressing register 
+////////////////
+always @(posedge clk, negedge rstn) begin
+	if(!rstn) begin
+		for(i=0;i<16;i=i+1) begin
+			rAddr[i] <= 9'd0;
+		end
+		rRow_toggle1 <= 1'b0;//64
+		rRow_toggle2 <= 1'b0;//0 start
+		rPrevState <= 2'b0;
+	end
+	else if(iStart && (rCurState != ST_COL_END))begin
+		case(rCurState)
+			ST_ROW0: begin
+				if(wCol_end) begin
+					for(i=4;i<16;i=i+1) begin
+						rAddr[i] <= 9'd0;
+					end
+					for(i=0;i<4;i=i+1) begin
+						rAddr[i] <= 9'd64;
+					end
+					rPrevState <= 2'b00;
+				end
+			end
+			ST_ROW_ODD: begin
+				if(wCol_end) begin
+					rPrevState <= 2'b01;
+					if(rRow_toggle1) begin
+						for(i=0;i<12;i=i+1) begin
+							rAddr[i] <= 9'd0;
+						end
+						for(i=12;i<16;i=i+1) begin
+							rAddr[i] <= 9'd64;
+						end
+					end
+					else begin
+						for(i=0;i<12;i=i+1) begin
+							rAddr[i] <= 9'd64;
+						end
+						for(i=12;i<16;i=i+1) begin
+							rAddr[i] <= 9'd0;
+						end
+					end
+
+					rRow_toggle1 <= rRow_toggle1 + 1'b1;
+				end
+			end
+			ST_ROW_EVEN: begin
+				if(wCol_end) begin
+					rPrevState <= 2'b10;
+					if(rRow_toggle2) begin
+						for(i=4;i<16;i=i+1) begin
+							rAddr[i] <= 9'd0;
+						end
+						for(i=0;i<4;i=i+1) begin
+							rAddr[i] <= 9'd64;
+						end
+					end
+					else begin
+						for(i=4;i<16;i=i+1) begin
+							rAddr[i] <= 9'd64;
+						end
+						for(i=0;i<4;i=i+1) begin
+							rAddr[i] <= 9'd0;
+						end
+					end
+
+					rRow_toggle2 <= rRow_toggle2 + 1'b1;
+				end
+			end
+			ST_ROW_END : begin
+				if(wCol_end) begin
+					rPrevState <= 2'b11;
+				end
+			end
+			default: rPrevState <= 2'b00;
+    	endcase
+
+		if(rCnt_delay == ACC_DELAY) begin
+			if(!(rCol == (MAXCOL -2))) begin
+				if(rCol_toggle) begin
+					rAddr[0] <= rAddr[0] + 1;
+					rAddr[1] <= rAddr[1] + 1;
+					rAddr[4] <= rAddr[4] + 1;
+					rAddr[5] <= rAddr[5] + 1;
+					rAddr[8] <= rAddr[8] + 1;
+					rAddr[9] <= rAddr[9] + 1;
+					rAddr[12] <= rAddr[12] + 1;
+					rAddr[13] <= rAddr[13] + 1;
+				end
+				else begin
+					rAddr[2] <= rAddr[2] + 1;
+					rAddr[3] <= rAddr[3] + 1;
+					rAddr[6] <= rAddr[6] + 1;
+					rAddr[7] <= rAddr[7] + 1;
+					rAddr[10] <= rAddr[10] + 1;
+					rAddr[11] <= rAddr[11] + 1;
+					rAddr[14] <= rAddr[14] + 1;
+					rAddr[15] <= rAddr[15] + 1;
+				end
+			end
+		end
+		else if(rCnt_delay == windowDelay)begin
+			if(!(rCol == (MAXCOL -2))) begin
+				if(rCol_toggle) begin
+					rAddr[0] <= rAddr[0] + 1;
+					rAddr[1] <= rAddr[1] + 1;
+					rAddr[4] <= rAddr[4] + 1;
+					rAddr[5] <= rAddr[5] + 1;
+					rAddr[8] <= rAddr[8] + 1;
+					rAddr[9] <= rAddr[9] + 1;
+					rAddr[12] <= rAddr[12] + 1;
+					rAddr[13] <= rAddr[13] + 1;
+				end
+				else begin
+					rAddr[2] <= rAddr[2] + 1;
+					rAddr[3] <= rAddr[3] + 1;
+					rAddr[6] <= rAddr[6] + 1;
+					rAddr[7] <= rAddr[7] + 1;
+					rAddr[10] <= rAddr[10] + 1;
+					rAddr[11] <= rAddr[11] + 1;
+					rAddr[14] <= rAddr[14] + 1;
+					rAddr[15] <= rAddr[15] + 1;
+				end
+			end
+		end
+	end 
+end
+
+//COL_END STATE delay register 
+always @(posedge clk, negedge rstn) begin
+	if(!rstn) begin
+		rColSyncDelay <= 0;
+		rEndOfColState <= 0;
+	end
+	else if(rCurState == ST_COL_END) begin
+
+		if(rColSyncDelay == COL_SYNC) begin
+			rColSyncDelay <= 0;
+		end
+		else begin
+			rColSyncDelay <= rColSyncDelay + 1;
+		end
+		if(rColSyncDelay == (COL_SYNC - 1)) begin
+			rEndOfColState <= 1'b1;
+		end
+		else begin
+			rEndOfColState <= 0;
+		end
+	end
+end
+
+
+//Col row value calculate
+always@(posedge clk, negedge rstn) begin
+    if(!rstn) begin
+       rCol<= 8'b0;
+	   rRow <= 8'b0;
+	   rCnt_delay <= 0;
+	   rCol_toggle <= 0;
+    end
+    else if(iStart && (rCurState != ST_IDLE && rCurState != ST_COL_END)) begin
+		if(wCol_end) begin
+			rCol <= 0;
+			rRow <= rRow + 1'b1;
+		end
+		else begin
+			if(rCnt_delay == windowDelay)begin
+				rCnt_delay <= 0;
+				rCol <=  rCol + 1;
+				rCol_toggle <= rCol_toggle + 1'b1;//toggle 1bit continuouly adding one 
+			end
+			else begin
+				rCnt_delay <= rCnt_delay + 1'b1;
+			end
+		end
+    end
+end
+
+assign wCol_end = (rCol == MAXCOL) ? 1'b1 : 1'b0;
+assign wRow_end = (rRow == MAXROW) ? 1'b1 : 1'b0;
+
+
+//////////////////////////////
+// ZERO PADDING
+//////////////////////////////
+always @(*) begin
+	case(rCurState)
+		ST_ROW0: begin
+			if(rCol == 0) begin //if col is 0
+				for(i=0;i<4;i=i+1) begin
+					woDin[i] <= 0;
+				end
+				for(i=4;i<13;i=i+4) begin
+					woDin[i] <= 0;
+				end 
+				for(i = 0; i<DATA_WIDTH; i=i+8 ) begin
+					woDin[5][i+:8] <= r_data[0][i+:8];
+					woDin[6][i+:8] <= r_data[1][i+:8];
+					woDin[7][i+:8] <= r_data[2][i+:8];
+					woDin[9][i+:8] <= r_data[4][i+:8];
+					woDin[10][i+:8] <= r_data[5][i+:8];
+					woDin[11][i+:8] <= r_data[6][i+:8];
+					woDin[13][i+:8] <= r_data[8][i+:8];
+					woDin[14][i+:8] <= r_data[9][i+:8];
+					woDin[15][i+:8] <= r_data[10][i+:8];
+				end
+			
+			end
+			else if(rCol == (MAXCOL -1)) begin
+				for(i=0;i<4;i=i+1) begin
+					woDin[i] <= 0;
+				end
+				for(i=7;i<16;i=i+4) begin
+					woDin[i] <= 0;
+				end
+				for(i = 0; i<DATA_WIDTH; i=i+8 ) begin
+					woDin[4][i+:8] <= r_data[1][i+:8];
+					woDin[5][i+:8] <= r_data[2][i+:8];
+					woDin[6][i+:8] <= r_data[3][i+:8];
+					woDin[8][i+:8] <= r_data[5][i+:8];
+					woDin[9][i+:8] <= r_data[6][i+:8];
+					woDin[10][i+:8] <= r_data[7][i+:8];
+					woDin[12][i+:8] <= r_data[9][i+:8];
+					woDin[13][i+:8] <= r_data[10][i+:8];
+					woDin[14][i+:8] <= r_data[11][i+:8];
+				end
+
+			end
+			else begin //if col is not 0
+				for(i=0;i<4;i=i+1) begin
+					woDin[i] <= 0;
+				end
+				if(rCol_toggle) begin
+					for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+						woDin[4][i+:8] <= r_data[1][i+:8];
+						woDin[5][i+:8] <= r_data[2][i+:8];
+						woDin[6][i+:8] <= r_data[3][i+:8];
+						woDin[7][i+:8] <= r_data[0][i+:8];
+
+						woDin[8][i+:8] <= r_data[5][i+:8];
+						woDin[9][i+:8] <= r_data[6][i+:8];
+						woDin[10][i+:8] <= r_data[7][i+:8];
+						woDin[11][i+:8] <= r_data[4][i+:8];
+
+						woDin[12][i+:8] <= r_data[9][i+:8];
+						woDin[13][i+:8] <= r_data[10][i+:8];
+						woDin[14][i+:8] <= r_data[11][i+:8];
+						woDin[15][i+:8] <= r_data[8][i+:8];
+					end
+				end
+				else begin
+					for(i = 0; i<DATA_WIDTH; i=i+8 ) begin
+						woDin[4][i+:8] <= r_data[3][i+:8];
+						woDin[5][i+:8] <= r_data[0][i+:8];
+						woDin[6][i+:8] <= r_data[1][i+:8];
+						woDin[7][i+:8] <= r_data[2][i+:8];
+
+						woDin[8][i+:8] <= r_data[7][i+:8];
+						woDin[9][i+:8] <= r_data[4][i+:8];
+						woDin[10][i+:8] <= r_data[5][i+:8];
+						woDin[11][i+:8] <= r_data[6][i+:8];
+
+						woDin[12][i+:8] <= r_data[11][i+:8];
+						woDin[13][i+:8] <= r_data[8][i+:8];
+						woDin[14][i+:8] <= r_data[9][i+:8];
+						woDin[15][i+:8] <= r_data[10][i+:8];
+					end
+				end
+			end
+		end
+		ST_ROW_ODD: begin
+			if(rCol == 0) begin //if col is 0
+				for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+					woDin[0][i+:8] <= 8'b0;
+					woDin[1][i+:8] <= r_data[4][i+:8];
+					woDin[2][i+:8] <= r_data[5][i+:8];
+					woDin[3][i+:8] <= r_data[6][i+:8];
+
+					woDin[4][i+:8] <= 8'b0;
+					woDin[5][i+:8] <= r_data[8][i+:8];
+					woDin[6][i+:8] <= r_data[9][i+:8];
+					woDin[7][i+:8] <= r_data[10][i+:8];
+
+					woDin[8][i+:8] <= 8'b0;
+					woDin[9][i+:8] <= r_data[12][i+:8];
+					woDin[10][i+:8] <= r_data[13][i+:8];
+					woDin[11][i+:8] <= r_data[14][i+:8];
+
+					woDin[12][i+:8] <= 8'b0;
+					woDin[13][i+:8] <= r_data[0][i+:8];
+					woDin[14][i+:8] <= r_data[1][i+:8];
+					woDin[15][i+:8] <= r_data[2][i+:8];
+
+				end
+			end
+			else if(rCol == (MAXCOL -1)) begin
+				for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+		
+					woDin[0][i+:8] <= r_data[5][i+:8];
+					woDin[1][i+:8] <= r_data[6][i+:8];
+					woDin[2][i+:8] <= r_data[7][i+:8];
+					woDin[3][i+:8] <= 8'b0;
+
+					woDin[4][i+:8] <= r_data[9][i+:8];
+					woDin[5][i+:8] <= r_data[10][i+:8];
+					woDin[6][i+:8] <= r_data[11][i+:8];
+					woDin[7][i+:8] <= 8'b0;
+
+					woDin[11][i+:8] <= 8'b0;
+					woDin[8][i+:8] <= r_data[13][i+:8];
+					woDin[9][i+:8] <= r_data[14][i+:8];
+					woDin[10][i+:8] <= r_data[15][i+:8];
+
+					woDin[15][i+:8] <= 8'b0;
+					woDin[12][i+:8] <= r_data[1][i+:8];
+					woDin[13][i+:8] <= r_data[2][i+:8];
+					woDin[14][i+:8] <= r_data[3][i+:8];
+
+				end
+			end
+			else begin //if col is not 0
+				if(rCol_toggle) begin
+					for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+						woDin[0][i+:8] <= r_data[5][i+:8];
+						woDin[1][i+:8] <= r_data[6][i+:8];
+						woDin[2][i+:8] <= r_data[7][i+:8];
+						woDin[3][i+:8] <= r_data[4][i+:8];
+
+						woDin[4][i+:8] <= r_data[9][i+:8];
+						woDin[5][i+:8] <= r_data[10][i+:8];
+						woDin[6][i+:8] <= r_data[11][i+:8];
+						woDin[7][i+:8] <= r_data[8][i+:8];
+
+						woDin[8][i+:8] <= r_data[13][i+:8];
+						woDin[9][i+:8] <= r_data[14][i+:8];
+						woDin[10][i+:8] <= r_data[15][i+:8];
+						woDin[11][i+:8] <= r_data[12][i+:8];
+
+						woDin[12][i+:8] <= r_data[1][i+:8];
+						woDin[13][i+:8] <= r_data[2][i+:8];
+						woDin[14][i+:8] <= r_data[3][i+:8];
+						woDin[15][i+:8] <= r_data[0][i+:8];
+
+					end
+					
+				end
+				else begin
+					for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+						woDin[0][i+:8] <= r_data[7][i+:8];
+						woDin[1][i+:8] <= r_data[4][i+:8];
+						woDin[2][i+:8] <= r_data[5][i+:8];
+						woDin[3][i+:8] <= r_data[6][i+:8];
+
+						woDin[4][i+:8] <= r_data[11][i+:8];
+						woDin[5][i+:8] <= r_data[8][i+:8];
+						woDin[6][i+:8] <= r_data[9][i+:8];
+						woDin[7][i+:8] <= r_data[10][i+:8];
+
+						woDin[8][i+:8] <= r_data[15][i+:8];
+						woDin[9][i+:8] <= r_data[12][i+:8];
+						woDin[10][i+:8] <= r_data[13][i+:8];
+						woDin[11][i+:8] <= r_data[14][i+:8];
+
+						woDin[12][i+:8] <= r_data[3][i+:8];
+						woDin[13][i+:8] <= r_data[0][i+:8];
+						woDin[14][i+:8] <= r_data[1][i+:8];
+						woDin[15][i+:8] <= r_data[2][i+:8];
+
+					end
+				end
+			end
+		end
+		ST_ROW_EVEN: begin
+			if(rCol == 0) begin //if col is 0
+				for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+					woDin[0][i+:8] <= 8'b0;
+					woDin[1][i+:8] <= r_data[12][i+:8];
+					woDin[2][i+:8] <= r_data[13][i+:8];
+					woDin[3][i+:8] <= r_data[14][i+:8];
+
+					woDin[4][i+:8] <= 8'b0;
+					woDin[5][i+:8] <= r_data[0][i+:8];
+					woDin[6][i+:8] <= r_data[1][i+:8];
+					woDin[7][i+:8] <= r_data[2][i+:8];
+
+					woDin[8][i+:8] <= 8'b0;
+					woDin[9][i+:8] <= r_data[4][i+:8];
+					woDin[10][i+:8] <= r_data[5][i+:8];
+					woDin[11][i+:8] <= r_data[6][i+:8];
+
+					woDin[12][i+:8] <= 8'b0;
+					woDin[13][i+:8] <= r_data[8][i+:8];
+					woDin[14][i+:8] <= r_data[9][i+:8];
+					woDin[15][i+:8] <= r_data[10][i+:8];
+
+				end
+			end
+			else if(rCol == (MAXCOL -1)) begin
+				for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+					woDin[3][i+:8] <= 8'b0;
+					woDin[0][i+:8] <= r_data[13][i+:8];
+					woDin[1][i+:8] <= r_data[14][i+:8];
+					woDin[2][i+:8] <= r_data[15][i+:8];
+
+					woDin[7][i+:8] <= 8'b0;
+					woDin[4][i+:8] <= r_data[1][i+:8];
+					woDin[5][i+:8] <= r_data[2][i+:8];
+					woDin[6][i+:8] <= r_data[3][i+:8];
+
+					woDin[11][i+:8] <= 8'b0;
+					woDin[8][i+:8] <= r_data[5][i+:8];
+					woDin[9][i+:8] <= r_data[6][i+:8];
+					woDin[10][i+:8] <= r_data[7][i+:8];
+
+					woDin[15][i+:8] <= 8'b0;
+					woDin[12][i+:8] <= r_data[9][i+:8];
+					woDin[13][i+:8] <= r_data[10][i+:8];
+					woDin[14][i+:8] <= r_data[11][i+:8];
+				end
+			end
+			else begin //if col is not 0
+				if(rCol_toggle) begin
+					for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+						woDin[0][i+:8] <= r_data[13][i+:8];
+						woDin[1][i+:8] <= r_data[14][i+:8];
+						woDin[2][i+:8] <= r_data[15][i+:8];
+						woDin[3][i+:8] <= r_data[12][i+:8];
+
+						woDin[4][i+:8] <= r_data[1][i+:8];
+						woDin[5][i+:8] <= r_data[2][i+:8];
+						woDin[6][i+:8] <= r_data[3][i+:8];
+						woDin[7][i+:8] <= r_data[0][i+:8];
+
+						woDin[8][i+:8] <= r_data[5][i+:8];
+						woDin[9][i+:8] <= r_data[6][i+:8];
+						woDin[10][i+:8] <= r_data[7][i+:8];
+						woDin[11][i+:8] <= r_data[4][i+:8];
+
+						woDin[12][i+:8] <= r_data[9][i+:8];
+						woDin[13][i+:8] <= r_data[10][i+:8];
+						woDin[14][i+:8] <= r_data[11][i+:8];
+						woDin[15][i+:8] <= r_data[8][i+:8];
+					end
+				end
+				else begin
+					for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+						woDin[0][i+:8] <= r_data[7][i+:8];
+						woDin[1][i+:8] <= r_data[4][i+:8];
+						woDin[2][i+:8] <= r_data[5][i+:8];
+						woDin[3][i+:8] <= r_data[6][i+:8];
+
+						woDin[4][i+:8] <= r_data[11][i+:8];
+						woDin[5][i+:8] <= r_data[8][i+:8];
+						woDin[6][i+:8] <= r_data[9][i+:8];
+						woDin[7][i+:8] <= r_data[10][i+:8];
+
+						woDin[8][i+:8] <= r_data[15][i+:8];
+						woDin[9][i+:8] <= r_data[12][i+:8];
+						woDin[10][i+:8] <= r_data[13][i+:8];
+						woDin[11][i+:8] <= r_data[14][i+:8];
+
+						woDin[12][i+:8] <= r_data[3][i+:8];
+						woDin[13][i+:8] <= r_data[0][i+:8];
+						woDin[14][i+:8] <= r_data[1][i+:8];
+						woDin[15][i+:8] <= r_data[2][i+:8];
+					end
+				end
+			end
+		end
+		ST_ROW_END: begin
+			if(rCol == 0) begin //if col is 0
+				for(i=12;i<16;i=i+1) begin
+					woDin[i]<= 0;
+				end
+				for(i=0;i<9;i=i+4) begin//0 4 8
+					woDin[i] <= 0;
+				end
+				for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+					woDin[1][i+:8] <= r_data[4][i+:8];
+					woDin[2][i+:8] <= r_data[5][i+:8];
+					woDin[3][i+:8] <= r_data[6][i+:8];
+
+					woDin[5][i+:8] <= r_data[8][i+:8];
+					woDin[6][i+:8] <= r_data[9][i+:8];
+					woDin[7][i+:8] <= r_data[10][i+:8];
+
+					woDin[9][i+:8] <= r_data[12][i+:8];
+					woDin[10][i+:8] <= r_data[13][i+:8];
+					woDin[11][i+:8] <= r_data[14][i+:8];
+				end
+			end
+			else if(rCol == (MAXCOL -1)) begin
+				for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+					woDin[0][i+:8] <= r_data[5][i+:8];
+					woDin[1][i+:8] <= r_data[6][i+:8];
+					woDin[2][i+:8] <= r_data[7][i+:8];
+					woDin[3][i+:8] <= 8'b0;
+					
+					woDin[4][i+:8] <= r_data[9][i+:8];
+					woDin[5][i+:8] <= r_data[10][i+:8];
+					woDin[6][i+:8] <= r_data[11][i+:8];
+					woDin[7][i+:8] <= 8'b0;
+
+					woDin[8][i+:8] <= r_data[13][i+:8];
+					woDin[9][i+:8] <= r_data[14][i+:8];
+					woDin[10][i+:8] <= r_data[15][i+:8];
+					woDin[11][i+:8] <= 8'b0;
+				end
+				for(i=12;i<16;i=i+1) begin//0 4 8
+					woDin[i] <= 0;
+				end
+			end
+			else begin //if col is not 0
+				for(i=12;i<16;i=i+1) begin
+					woDin[i] <= 0;
+				end
+				if(rCol_toggle) begin
+					for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+						woDin[0][i+:8] <= r_data[5][i+:8];
+						woDin[1][i+:8] <= r_data[6][i+:8];
+						woDin[2][i+:8] <= r_data[7][i+:8];
+						woDin[3][i+:8] <= r_data[4][i+:8];
+
+						woDin[4][i+:8] <= r_data[9][i+:8];
+						woDin[5][i+:8] <= r_data[10][i+:8];
+						woDin[6][i+:8] <= r_data[11][i+:8];
+						woDin[7][i+:8] <= r_data[8][i+:8];
+
+						woDin[8][i+:8] <= r_data[13][i+:8];
+						woDin[9][i+:8] <= r_data[14][i+:8];
+						woDin[10][i+:8] <= r_data[15][i+:8];
+						woDin[11][i+:8] <= r_data[12][i+:8];
+
+					end
+				end
+				else begin
+					for(i = 0; i<DATA_WIDTH; i=i+8 ) begin // 4ea rgb0 slicing 
+						woDin[0][i+:8] <= r_data[7][i+:8];
+						woDin[1][i+:8] <= r_data[4][i+:8];
+						woDin[2][i+:8] <= r_data[5][i+:8];
+						woDin[3][i+:8] <= r_data[6][i+:8];
+
+						woDin[4][i+:8] <= r_data[11][i+:8];
+						woDin[5][i+:8] <= r_data[8][i+:8];
+						woDin[6][i+:8] <= r_data[9][i+:8];
+						woDin[7][i+:8] <= r_data[10][i+:8];
+
+						woDin[8][i+:8] <= r_data[15][i+:8];
+						woDin[9][i+:8] <= r_data[12][i+:8];
+						woDin[10][i+:8] <= r_data[13][i+:8];
+						woDin[11][i+:8] <= r_data[14][i+:8];
+					end
+				end
+			end
+		end
+	endcase
+end
+
+
+always @(posedge clk, negedge rstn) begin //name
+	if(!rstn) begin
+		for(i=0;i<16;i=i+1) begin
+			r_data[i] <= 0;
+		end
+	end
+	else if(iStart && (rCurState != ST_COL_END)) begin
+		r_data[0] <= iData0;
+		r_data[1] <= iData1;
+		r_data[2] <= iData2;
+		r_data[3] <= iData3;
+		r_data[4] <= iData4;
+		r_data[5] <= iData5;
+		r_data[6] <= iData6;
+		r_data[7] <= iData7;
+		r_data[8] <= iData8;
+		r_data[9] <= iData9;
+		r_data[10] <= iData10;
+		r_data[11] <= iData11;
+		r_data[12] <= iData12;
+		r_data[13] <= iData13;
+		r_data[14] <= iData14;
+		r_data[15] <= iData15;	
+
+	end
+end
+
+assign oCs = wCs;
+assign oMac_vld = (rCnt_delay < 3)? 1'b1 : 1'b0;//starting split 
+
+assign oAddr0 = rAddr[0];
+assign oAddr1 = rAddr[1];
+assign oAddr2 = rAddr[2];
+assign oAddr3 = rAddr[3];
+assign oAddr4 = rAddr[4];
+assign oAddr5 = rAddr[5];
+assign oAddr6 = rAddr[6];
+assign oAddr7 = rAddr[7];
+assign oAddr8 = rAddr[8];
+assign oAddr9 = rAddr[9];
+assign oAddr10 = rAddr[10];
+assign oAddr11 = rAddr[11];
+assign oAddr12 = rAddr[12];
+assign oAddr13 = rAddr[13];
+assign oAddr14 = rAddr[14];
+assign oAddr15 = rAddr[15];
+
+wire [6:0] wAcc_split;
+assign wAcc_split = (rCnt_delay > ACC_DELAY + ACC_DELAY_2) ? 7'd64 
+				  : (rCnt_delay > ACC_DELAY) ? 7'd0 
+				  : (rCnt_delay > ACC_DELAY - ACC_DELAY_2) ? 7'd64 :7'd0;
+
+assign oDin0_0 = woDin[0][(0+wAcc_split)+:8];
+assign oDin0_1 = woDin[1][(0+wAcc_split)+:8];
+assign oDin0_2 = woDin[2][(0+wAcc_split)+:8];
+assign oDin0_3 = woDin[3][(0+wAcc_split)+:8]; 
+assign oDin0_4 = woDin[4][(0+wAcc_split)+:8]; 
+assign oDin0_5 = woDin[5][(0+wAcc_split)+:8]; 
+assign oDin0_6 = woDin[6][(0+wAcc_split)+:8]; 
+assign oDin0_7 = woDin[7][(0+wAcc_split)+:8]; 
+assign oDin0_8 = woDin[8][(0+wAcc_split)+:8]; 
+assign oDin0_9 = woDin[9][(0+wAcc_split)+:8]; 
+assign oDin0_10 = woDin[10][(0+wAcc_split)+:8]; 
+assign oDin0_11 = woDin[11][(0+wAcc_split)+:8]; 
+assign oDin0_12 = woDin[12][(0+wAcc_split)+:8]; 
+assign oDin0_13 = woDin[13][(0+wAcc_split)+:8]; 
+assign oDin0_14 = woDin[14][(0+wAcc_split)+:8]; 
+assign oDin0_15 = woDin[15][(0+wAcc_split)+:8]; 
+
+assign oDin1_0 = woDin[0][(8+wAcc_split)+:8];
+assign oDin1_1 = woDin[1][(8+wAcc_split)+:8];
+assign oDin1_2 = woDin[2][(8+wAcc_split)+:8];
+assign oDin1_3 = woDin[3][(8+wAcc_split)+:8]; 
+assign oDin1_4 = woDin[4][(8+wAcc_split)+:8]; 
+assign oDin1_5 = woDin[5][(8+wAcc_split)+:8]; 
+assign oDin1_6 = woDin[6][(8+wAcc_split)+:8]; 
+assign oDin1_7 = woDin[7][(8+wAcc_split)+:8]; 
+assign oDin1_8 = woDin[8][(8+wAcc_split)+:8]; 
+assign oDin1_9 = woDin[9][(8+wAcc_split)+:8]; 
+assign oDin1_10 = woDin[10][(8+wAcc_split)+:8]; 
+assign oDin1_11 = woDin[11][(8+wAcc_split)+:8]; 
+assign oDin1_12 = woDin[12][(8+wAcc_split)+:8]; 
+assign oDin1_13 = woDin[13][(8+wAcc_split)+:8]; 
+assign oDin1_14 = woDin[14][(8+wAcc_split)+:8]; 
+assign oDin1_15 = woDin[15][(8+wAcc_split)+:8]; 
+
+assign oDin2_0 = woDin[0][(16+wAcc_split)+:8];
+assign oDin2_1 = woDin[1][(16+wAcc_split)+:8];
+assign oDin2_2 = woDin[2][(16+wAcc_split)+:8];
+assign oDin2_3 = woDin[3][(16+wAcc_split)+:8]; 
+assign oDin2_4 = woDin[4][(16+wAcc_split)+:8]; 
+assign oDin2_5 = woDin[5][(16+wAcc_split)+:8]; 
+assign oDin2_6 = woDin[6][(16+wAcc_split)+:8]; 
+assign oDin2_7 = woDin[7][(16+wAcc_split)+:8]; 
+assign oDin2_8 = woDin[8][(16+wAcc_split)+:8]; 
+assign oDin2_9 = woDin[9][(16+wAcc_split)+:8]; 
+assign oDin2_10 = woDin[10][(16+wAcc_split)+:8]; 
+assign oDin2_11 = woDin[11][(16+wAcc_split)+:8]; 
+assign oDin2_12 = woDin[12][(16+wAcc_split)+:8]; 
+assign oDin2_13 = woDin[13][(16+wAcc_split)+:8]; 
+assign oDin2_14 = woDin[14][(16+wAcc_split)+:8]; 
+assign oDin2_15 = woDin[15][(16+wAcc_split)+:8]; 
+
+assign oDin3_0 = woDin[0][(24+wAcc_split)+:8];
+assign oDin3_1 = woDin[1][(24+wAcc_split)+:8];
+assign oDin3_2 = woDin[2][(24+wAcc_split)+:8];
+assign oDin3_3 = woDin[3][(24+wAcc_split)+:8]; 
+assign oDin3_4 = woDin[4][(24+wAcc_split)+:8]; 
+assign oDin3_5 = woDin[5][(24+wAcc_split)+:8]; 
+assign oDin3_6 = woDin[6][(24+wAcc_split)+:8]; 
+assign oDin3_7 = woDin[7][(24+wAcc_split)+:8]; 
+assign oDin3_8 = woDin[8][(24+wAcc_split)+:8]; 
+assign oDin3_9 = woDin[9][(24+wAcc_split)+:8]; 
+assign oDin3_10 = woDin[10][(24+wAcc_split)+:8]; 
+assign oDin3_11 = woDin[11][(24+wAcc_split)+:8]; 
+assign oDin3_12 = woDin[12][(24+wAcc_split)+:8]; 
+assign oDin3_13 = woDin[13][(24+wAcc_split)+:8]; 
+assign oDin3_14 = woDin[14][(24+wAcc_split)+:8]; 
+assign oDin3_15 = woDin[15][(24+wAcc_split)+:8]; 
+
+assign oDin4_0 = woDin[0][(32+wAcc_split)+:8];
+assign oDin4_1 = woDin[1][(32+wAcc_split)+:8];
+assign oDin4_2 = woDin[2][(32+wAcc_split)+:8];
+assign oDin4_3 = woDin[3][(32+wAcc_split)+:8]; 
+assign oDin4_4 = woDin[4][(32+wAcc_split)+:8]; 
+assign oDin4_5 = woDin[5][(32+wAcc_split)+:8]; 
+assign oDin4_6 = woDin[6][(32+wAcc_split)+:8]; 
+assign oDin4_7 = woDin[7][(32+wAcc_split)+:8]; 
+assign oDin4_8 = woDin[8][(32+wAcc_split)+:8]; 
+assign oDin4_9 = woDin[9][(32+wAcc_split)+:8]; 
+assign oDin4_10 = woDin[10][(32+wAcc_split)+:8]; 
+assign oDin4_11 = woDin[11][(32+wAcc_split)+:8]; 
+assign oDin4_12 = woDin[12][(32+wAcc_split)+:8]; 
+assign oDin4_13 = woDin[13][(32+wAcc_split)+:8]; 
+assign oDin4_14 = woDin[14][(32+wAcc_split)+:8]; 
+assign oDin4_15 = woDin[15][(32+wAcc_split)+:8]; 
+
+assign oDin5_0 = woDin[0][(40+wAcc_split)+:8];
+assign oDin5_1 = woDin[1][(40+wAcc_split)+:8];
+assign oDin5_2 = woDin[2][(40+wAcc_split)+:8];
+assign oDin5_3 = woDin[3][(40+wAcc_split)+:8]; 
+assign oDin5_4 = woDin[4][(40+wAcc_split)+:8]; 
+assign oDin5_5 = woDin[5][(40+wAcc_split)+:8]; 
+assign oDin5_6 = woDin[6][(40+wAcc_split)+:8]; 
+assign oDin5_7 = woDin[7][(40+wAcc_split)+:8]; 
+assign oDin5_8 = woDin[8][(40+wAcc_split)+:8]; 
+assign oDin5_9 = woDin[9][(40+wAcc_split)+:8]; 
+assign oDin5_10 = woDin[10][(40+wAcc_split)+:8]; 
+assign oDin5_11 = woDin[11][(40+wAcc_split)+:8]; 
+assign oDin5_12 = woDin[12][(40+wAcc_split)+:8]; 
+assign oDin5_13 = woDin[13][(40+wAcc_split)+:8]; 
+assign oDin5_14 = woDin[14][(40+wAcc_split)+:8]; 
+assign oDin5_15 = woDin[15][(40+wAcc_split)+:8]; 
+
+assign oDin6_0 = woDin[0][(48+wAcc_split)+:8];
+assign oDin6_1 = woDin[1][(48+wAcc_split)+:8];
+assign oDin6_2 = woDin[2][(48+wAcc_split)+:8];
+assign oDin6_3 = woDin[3][(48+wAcc_split)+:8]; 
+assign oDin6_4 = woDin[4][(48+wAcc_split)+:8]; 
+assign oDin6_5 = woDin[5][(48+wAcc_split)+:8]; 
+assign oDin6_6 = woDin[6][(48+wAcc_split)+:8]; 
+assign oDin6_7 = woDin[7][(48+wAcc_split)+:8]; 
+assign oDin6_8 = woDin[8][(48+wAcc_split)+:8]; 
+assign oDin6_9 = woDin[9][(48+wAcc_split)+:8]; 
+assign oDin6_10 = woDin[10][(48+wAcc_split)+:8]; 
+assign oDin6_11 = woDin[11][(48+wAcc_split)+:8]; 
+assign oDin6_12 = woDin[12][(48+wAcc_split)+:8]; 
+assign oDin6_13 = woDin[13][(48+wAcc_split)+:8]; 
+assign oDin6_14 = woDin[14][(48+wAcc_split)+:8]; 
+assign oDin6_15 = woDin[15][(48+wAcc_split)+:8]; 
+
+assign oDin7_0 = woDin[0][(56+wAcc_split)+:8];
+assign oDin7_1 = woDin[1][(56+wAcc_split)+:8];
+assign oDin7_2 = woDin[2][(56+wAcc_split)+:8];
+assign oDin7_3 = woDin[3][(56+wAcc_split)+:8]; 
+assign oDin7_4 = woDin[4][(56+wAcc_split)+:8]; 
+assign oDin7_5 = woDin[5][(56+wAcc_split)+:8]; 
+assign oDin7_6 = woDin[6][(56+wAcc_split)+:8]; 
+assign oDin7_7 = woDin[7][(56+wAcc_split)+:8]; 
+assign oDin7_8 = woDin[8][(56+wAcc_split)+:8]; 
+assign oDin7_9 = woDin[9][(56+wAcc_split)+:8]; 
+assign oDin7_10 = woDin[10][(56+wAcc_split)+:8]; 
+assign oDin7_11 = woDin[11][(56+wAcc_split)+:8]; 
+assign oDin7_12 = woDin[12][(56+wAcc_split)+:8]; 
+assign oDin7_13 = woDin[13][(56+wAcc_split)+:8]; 
+assign oDin7_14 = woDin[14][(56+wAcc_split)+:8]; 
+assign oDin7_15 = woDin[15][(56+wAcc_split)+:8]; 
+
+endmodule

@@ -1,4 +1,4 @@
-module parsing_data_layer00 (
+module parsing_data_layer04 (
     input clk,
     input rstn,
 	input iStart,
@@ -59,8 +59,8 @@ module parsing_data_layer00 (
 	output oMac_vld
 );
 
-localparam MAXCOL = 128;//256/2 -1
-localparam MAXROW = 127;
+localparam MAXCOL = 64;//256/2 -1
+localparam MAXROW = 63;
 
 localparam ST_IDLE         = 3'b000,
 		   ST_ROW0         = 3'b001,
@@ -70,12 +70,13 @@ localparam ST_IDLE         = 3'b000,
 		   ST_COL_END      = 3'b101;//for sync axi this state acess all state except IDLE
 
 		   
-parameter windowDelay = 20;//rcnt increase until this value
-parameter windowDelayWidth = 5;//rcnt adding log2(windowDelay))+1
+parameter windowDelay = 100;//rcnt increase until this value
+parameter windowDelayWidth = 8;//rcnt adding log2(windowDelay))+1
 parameter SPLIT_DELAY = windowDelay - ACC_DELAY;
-parameter ACC_DELAY = 5;
-parameter SPLIT_CNT = 33;
-parameter SPLIT_CNT_WIDTH = 5;
+parameter ACC_DELAY = 33;
+parameter SPLIT_CNT = 129;//slice
+parameter SPLIT_CNT_WIDTH = 8;
+
 /*row change Delay*/
 parameter COL_SYNC = 63;//row change => delay clock
 parameter COL_SYNC_WIDTH = 7;//log2(COL_SYNC) + 1

@@ -8,6 +8,8 @@ reg [7:0] iDin[0:15];
 
 reg [7:0] iWeight[0:8];
 
+reg [15:0] iBias;
+
 wire [7:0] oOut;
 
 mac mac(
@@ -42,6 +44,8 @@ mac mac(
 	.iWeight7(iWeight[7]),
 	.iWeight8(iWeight[8]),
 
+	.iBias(iBias),
+
     .oOut(oOut)
 );
 
@@ -64,6 +68,8 @@ initial begin
 	#10;
 	rstn = 1'b1;
 	vld_i = 1'b0;
+
+	iBias = 100;
 
 	for(i=0;i<9;i=i+1)begin
 		iWeight[i] = 8'h2;
