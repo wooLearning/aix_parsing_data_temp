@@ -18,6 +18,7 @@ module layer00 (
 	output [7:0] oLayer0_1,
     output [7:0] oLayer0_2,
     output [7:0] oLayer0_3
+	
 );
 
 wire [127:0] oDin0;
