@@ -12,7 +12,7 @@ module mac(
     output [19:0] oOut0,
     output [19:0] oOut1,
     output [19:0] oOut2,
-    output [19:0] oOut3,
+    output [19:0] oOut3
 
     //input [15:0] iBias,
 
@@ -314,9 +314,9 @@ adder_tree u_adder_tree3(
 ./*output       */vld_o(w_vld_o) 
 );
 
-assign [19:0] oOut1 = w_acc_o[0]; 
-assign [19:0] oOut2 = w_acc_o[1]; 
-assign [19:0] oOut3 = w_acc_o[2]; 
-assign [19:0] oOut4 = w_acc_o[3];
+assign oOut0 = w_acc_o[0]; 
+assign oOut1 = w_acc_o[1]; 
+assign oOut2 = w_acc_o[2]; 
+assign oOut3 = w_acc_o[3];
 
 endmodule

@@ -241,6 +241,10 @@ always @(*) begin
 		if(rCol == 0) wCs = 16'b0111_0111_0111_0000;
 		else wCs = 16'hfff0; 
 	end
+	/*
+	ST_IDLE: wCs = 16'b0000_0111_0111_0111;
+	ST_COL_END : wCs = 16'b0111_0111_0111_0111;
+	*/
 	endcase  
 	
 end
@@ -813,7 +817,7 @@ always @(posedge clk, negedge rstn) begin //name
 end
 
 assign oCs = wCs;
-assign oMac_vld = (rCnt_delay < SPLIT_DELAY)? 1'b1 : 1'b0;//starting split 
+assign oMac_vld = (rCnt_delay > 4)? 1'b1 : 1'b0;//starting split 
 
 assign oAddr0 = rAddr[0];
 assign oAddr1 = rAddr[1];
@@ -899,6 +903,5 @@ assign oDin3_12 = woDin[12][24+:8];
 assign oDin3_13 = woDin[13][24+:8]; 
 assign oDin3_14 = woDin[14][24+:8]; 
 assign oDin3_15 = woDin[15][24+:8]; 
-
 
 endmodule
