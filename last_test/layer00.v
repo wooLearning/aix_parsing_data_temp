@@ -18,7 +18,7 @@ module layer00 (
 	output [7:0] oLayer0_1,
     output [7:0] oLayer0_2,
     output [7:0] oLayer0_3
-	
+
 );
 
 wire [127:0] oDin0;
@@ -233,21 +233,21 @@ adder_tree2 addertree2_1(//filter 1
 	.rstn(rstn),
 	.vld_i(vld_i_d4),
 
-	.iOut0(oOut0[4]),
-	.iOut1(oOut0[5]),
-	.iOut2(oOut0[6]),
+	.iOut0(oOut0[3]),
+	.iOut1(oOut0[4]),
+	.iOut2(oOut0[5]),
 
-	.iOut3(oOut1[4]),
-	.iOut4(oOut1[5]),
-	.iOut5(oOut1[6]),
+	.iOut3(oOut1[3]),
+	.iOut4(oOut1[4]),
+	.iOut5(oOut1[5]),
 
-	.iOut6(oOut2[4]),
-	.iOut7(oOut2[5]),
-	.iOut8(oOut2[6]),
+	.iOut6(oOut2[3]),
+	.iOut7(oOut2[4]),
+	.iOut8(oOut2[5]),
 
-	.iOut9(oOut3[4]),
-	.iOut10(oOut3[5]),
-	.iOut11(oOut3[6]),
+	.iOut9(oOut3[3]),
+	.iOut10(oOut3[4]),
+	.iOut11(oOut3[5]),
 
 	.iBias(iBias1),
 
@@ -263,21 +263,21 @@ adder_tree2 addertree2_2(//filter 2
 	.rstn(rstn),
 	.vld_i(vld_i_d4),
 
-	.iOut0(oOut0[7]),
-	.iOut1(oOut0[8]),
-	.iOut2(oOut0[9]),
+	.iOut0(oOut0[6]),
+	.iOut1(oOut0[7]),
+	.iOut2(oOut0[8]),
 
-	.iOut3(oOut1[7]),
-	.iOut4(oOut1[8]),
-	.iOut5(oOut1[9]),
+	.iOut3(oOut1[6]),
+	.iOut4(oOut1[7]),
+	.iOut5(oOut1[8]),
 
-	.iOut6(oOut2[7]),
-	.iOut7(oOut2[8]),
-	.iOut8(oOut2[9]),
+	.iOut6(oOut2[6]),
+	.iOut7(oOut2[7]),
+	.iOut8(oOut2[8]),
 
-	.iOut9(oOut3[7]),
-	.iOut10(oOut3[8]),
-	.iOut11(oOut3[9]),
+	.iOut9(oOut3[6]),
+	.iOut10(oOut3[7]),
+	.iOut11(oOut3[8]),
 
 	.iBias(iBias2),
 
@@ -293,21 +293,21 @@ adder_tree2 addertree2_3(//filter 3
 	.rstn(rstn),
 	.vld_i(vld_i_d4),
 
-	.iOut0(oOut0[10]),
-	.iOut1(oOut0[11]),
-	.iOut2(oOut0[12]),
+	.iOut0(oOut0[9]),
+	.iOut1(oOut0[10]),
+	.iOut2(oOut0[11]),
 
-	.iOut3(oOut1[10]),
-	.iOut4(oOut1[11]),
-	.iOut5(oOut1[12]),
+	.iOut3(oOut1[9]),
+	.iOut4(oOut1[10]),
+	.iOut5(oOut1[11]),
 
-	.iOut6(oOut2[10]),
-	.iOut7(oOut2[11]),
-	.iOut8(oOut2[12]),
+	.iOut6(oOut2[9]),
+	.iOut7(oOut2[10]),
+	.iOut8(oOut2[11]),
 
-	.iOut9(oOut3[10]),
-	.iOut10(oOut3[11]),
-	.iOut11(oOut3[12]),
+	.iOut9(oOut3[9]),
+	.iOut10(oOut3[10]),
+	.iOut11(oOut3[11]),
 
 	.iBias(iBias3),
 

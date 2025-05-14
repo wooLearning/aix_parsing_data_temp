@@ -44,35 +44,37 @@ layer00 layer00(
 );
 
 
-parameter IFM_DATA_SIZE_32  = 256*256;	
-parameter IFM_FILE_32 = "C:/yolohw/sim/inout_data_sw/log_feamap/CONV00_input_32b.hex"; 
+parameter IFM00_DATA_SIZE  = 256*256;	
+parameter IFM_FILE_00 = "C:/yolohw/sim/inout_data_sw/log_feamap/input_feature_map.hex"; 
 parameter BIAS_FILE_15 = "C:/yolohw/sim/inout_data_sw/log_param/CONV00_param_biases.hex";
-reg  [31:0] in_img[0:IFM_DATA_SIZE_32-1];  // Infmap
+reg  [31:0] in_img[0:IFM00_DATA_SIZE-1];  // Infmap
 reg  [15:0] r_Bias[0:15];  // Bias
  
 integer i,j,k;
 initial begin: PROC_SimmemLoad
 	// Inputs
-	for (i = 0; i< IFM_DATA_SIZE_32; i=i+1) begin
+	for (i = 0; i< IFM00_DATA_SIZE; i=i+1) begin
 		in_img[i] = 0;
 	end
 	for(i=0; i<16; i=i+1) begin
 		r_Bias[i] = 0;
 	end
-	$display ("Loading input feature maps from file: %s", IFM_FILE_32);
-	$readmemh(IFM_FILE_32, in_img);
+	$display ("Loading input feature maps from file: %s", IFM_FILE_00);
+	$readmemh(IFM_FILE_00, in_img);
 
 	$display ("Loading bias from file: %s", BIAS_FILE_15 );
 	$readmemh(BIAS_FILE_15, r_Bias);
 end
 
 
+reg[7:0] test_probe;
 initial begin
 	rstn = 1'b0;
 	#10;
 	rstn = 1'b1;
-	
 	iStart = 1'b0;
+	
+	test_probe = 1'b0;// for debug
 
 	/*bram init*/
 	i_ena = 16'b0000_0000_0000_0001;
@@ -85,189 +87,33 @@ initial begin
 		i_dia = in_img[j];
 		j = j + 1;
 	end
-	@(posedge clk);
+	@(posedge clk);//k=0 end
 
-	i_ena = 16'b0000_0000_0000_0010;
-	i_wea = 16'b0000_0000_0000_0010;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
+	for(k = 1; k < 16; k = k + 1) begin
+		i_ena = i_ena << 1;
+		i_wea = i_ena;
+		#10;
 		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
+		for(i = 0; i< 128; i = i + 1) begin
+			@(posedge clk);
+			i_addra = i;
+			i_dia = in_img[j];
+			j = j + 1;
+		end
+		@(posedge clk);
 	end
-	@(posedge clk);
 
-	i_ena = 16'b0000_0000_0000_0100;
-	i_wea = 16'b0000_0000_0000_0100;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	
-	@(posedge clk);
-	i_ena = 16'b0000_0000_0000_1000;
-	i_wea = 16'b0000_0000_0000_1000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b0000_0000_0001_0000;
-	i_wea = 16'b0000_0000_0001_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b0000_0000_0010_0000;
-	i_wea = 16'b0000_0000_0010_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b0000_0000_0100_0000;
-	i_wea = 16'b0000_0000_0100_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b0000_0000_1000_0000;
-	i_wea = 16'b0000_0000_1000_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b0000_0001_0000_0000;
-	i_wea = 16'b0000_0001_0000_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b0000_0010_0000_0000;
-	i_wea = 16'b0000_0010_0000_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b0000_0100_0000_0000;
-	i_wea = 16'b0000_0100_0000_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b0000_1000_0000_0000;
-	i_wea = 16'b0000_1000_0000_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b0001_0000_0000_0000;
-	i_wea = 16'b0001_0000_0000_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b0010_0000_0000_0000;
-	i_wea = 16'b0010_0000_0000_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b0100_0000_0000_0000;
-	i_wea = 16'b0100_0000_0000_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-	i_ena = 16'b1000_0000_0000_0000;
-	i_wea = 16'b1000_0000_0000_0000;
-	#10;
-	@(posedge clk);
-	for(i = 0; i< 128; i = i + 1) begin
-		@(posedge clk);
-		i_addra = i;
-		i_dia = in_img[j];
-		j = j + 1;
-	end
-	@(posedge clk);
-
-	#(CLK_PERIOD*10);
-	i_ena = 16'h0;
-	i_wea = 16'h0;
-	@(posedge clk);
-
-	j=0;
-	for (i=0; i<4; i=i+1 ) begin
-		iBias[i] = r_Bias[j];
-		j = j + 1;
+	// Bias
+	for(i=0;i<4;i=i+1) begin
+		iBias[i] = r_Bias[i];
 	end
 
 	iStart = 1'b1;
 
+end
+
+always @(oLayer[0]) begin
+	test_probe = oLayer[0];
 end
 
 endmodule

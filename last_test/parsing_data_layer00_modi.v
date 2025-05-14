@@ -123,8 +123,8 @@ localparam ST_IDLE         = 3'b000,
 		   
 parameter windowDelay = 20;//rcnt increase until this value
 parameter windowDelayWidth = 5;//rcnt adding log2(windowDelay))+1
-parameter SPLIT_DELAY = windowDelay - ACC_DELAY;
 parameter ACC_DELAY = 0;
+parameter SPLIT_DELAY = windowDelay - ACC_DELAY;
 parameter SPLIT_CNT = 33;
 parameter SPLIT_CNT_WIDTH = 5;
 
