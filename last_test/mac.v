@@ -7,7 +7,7 @@ module mac(
 
     input [127:0] iDin,
 
-    input [72:0] iWeight,
+    input [71:0] iWeight,
 
     output [19:0] oOut0,
     output [19:0] oOut1,

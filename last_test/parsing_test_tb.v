@@ -61,7 +61,9 @@ initial begin: PROC_SimmemLoad
 	end
 	$display ("Loading input feature maps from file: %s", IFM_FILE_00);
 	$readmemh(IFM_FILE_00, in_img);
-
+	for (i = 0; i< 100; i=i+1) begin
+		$display ("%x", in_img[i]);
+	end
 	$display ("Loading bias from file: %s", BIAS_FILE_15 );
 	$readmemh(BIAS_FILE_15, r_Bias);
 end
@@ -75,7 +77,8 @@ initial begin
 	iStart = 1'b0;
 	
 	test_probe = 1'b0;// for debug
-
+	j=0; 
+	k=0;
 	/*bram init*/
 	i_ena = 16'b0000_0000_0000_0001;
 	i_wea = 16'b0000_0000_0000_0001;
