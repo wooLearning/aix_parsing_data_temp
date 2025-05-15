@@ -119,9 +119,9 @@ localparam ST_IDLE         = 3'b000,
 		   ST_ROW_EVEN     = 3'b011,
 		   ST_ROW_END      = 3'b100,
 		   ST_COL_END      = 3'b101;//for sync axi this state acess all state except IDLE
-
+C:\yolohw\sim\inout_data_sw\log_feamap\input_feature_map.he
 		   
-parameter windowDelay = 53;//rcnt increase until this value
+parameter windowDelay = 30;//rcnt increase until this value
 parameter windowDelayWidth = 5;//rcnt adding log2(windowDelay))+1
 parameter ACC_DELAY = 0;
 parameter SPLIT_DELAY = windowDelay - ACC_DELAY;
