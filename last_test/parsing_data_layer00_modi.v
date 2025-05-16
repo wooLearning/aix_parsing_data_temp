@@ -22,7 +22,7 @@ module parsing_data_layer00 (
 	output[8:0] oAddr14,
 	output[8:0] oAddr15,
 
-	input [127:0] iData0, //from bram data
+	input [127:0] iData0	, //from bram data
 	input [127:0] iData1,
 	input [127:0] iData2,
 	input [127:0] iData3,
@@ -119,7 +119,7 @@ localparam ST_IDLE         = 3'b000,
 		   ST_ROW_EVEN     = 3'b011,
 		   ST_ROW_END      = 3'b100,
 		   ST_COL_END      = 3'b101;//for sync axi this state acess all state except IDLE
-C:\yolohw\sim\inout_data_sw\log_feamap\input_feature_map.he
+
 		   
 parameter windowDelay = 30;//rcnt increase until this value
 parameter windowDelayWidth = 5;//rcnt adding log2(windowDelay))+1

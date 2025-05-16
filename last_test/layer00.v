@@ -17,8 +17,9 @@ module layer00 (
 	output [7:0] oLayer0_0,
 	output [7:0] oLayer0_1,
     output [7:0] oLayer0_2,
-    output [7:0] oLayer0_3
+    output [7:0] oLayer0_3,
 
+	output o_ready
 );
 
 wire [127:0] oDin0;
@@ -48,14 +49,13 @@ parsing_top_layer00 parsing(
 );
 
 wire [71:0] iWeight[0:11];
-wire o_ready;
+
 weight_ctrl#(.KERNEL_WIDTH(72)) 
 weight_ctrl(
 	.clk(clk),
 	.rstn(rstn),
 	.i_load_en(w_oMac_vld),//load enable signal from SangWook
 
-	// ROM interface (for layer 0,2,4)
 	.o_ready(o_ready),// enable signal from SangWook
 
 	// each kernel has 9 weights (9*8=72 bits)

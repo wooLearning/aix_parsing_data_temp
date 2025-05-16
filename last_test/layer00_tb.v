@@ -1,6 +1,6 @@
 `timescale 1ns/ 1ns
 
-module parsing_test_tb();
+module layer00_tb();
 
 reg clk, rstn, iStart;
 // Clock
@@ -21,6 +21,8 @@ reg [15:0] iBias[0:3];
 
 wire [7:0] oLayer[0:3];
 
+wire o_ready;
+
 layer00 layer00(
 	.clk(clk),
 	.rstn(rstn),
@@ -40,7 +42,9 @@ layer00 layer00(
 	.oLayer0_0(oLayer[0]),
 	.oLayer0_1(oLayer[1]),
     .oLayer0_2(oLayer[2]),
-    .oLayer0_3(oLayer[3])
+    .oLayer0_3(oLayer[3]),
+
+	.o_ready(o_ready)
 );
 
 
