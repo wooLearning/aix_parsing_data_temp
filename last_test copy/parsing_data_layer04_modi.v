@@ -1,4 +1,4 @@
-module parsing_data_layer02 (
+module parsing_data_layer04 (
     input clk,
     input rstn,
 	input iStart,
@@ -178,8 +178,8 @@ module parsing_data_layer02 (
 	output oMac_vld
 );
 
-localparam MAXCOL = 64;//256/2 -1
-localparam MAXROW = 63;
+localparam MAXCOL = 32;//256/2 -1
+localparam MAXROW = 31;
 
 localparam ST_IDLE         = 3'b000,
 		   ST_ROW0         = 3'b001,
@@ -189,13 +189,13 @@ localparam ST_IDLE         = 3'b000,
 		   ST_COL_END      = 3'b101;//for sync axi this state acess all state except IDLE
 
 		   
-parameter windowDelay = 40;//rcnt increase until this value
+parameter windowDelay = 60;//rcnt increase until this value
 parameter windowDelayWidth = 5;//rcnt adding log2(windowDelay))+1
 parameter ACC_NUM = 2;
 parameter ACC_DELAY = windowDelay / ACC_NUM;
+parameter ACC_DELAY_2 = ACC_DELAY/2;
 
 parameter DATA_WIDTH = 128;
-
 /*row change Delay*/
 parameter COL_SYNC = 63;//row change => delay clock
 parameter COL_SYNC_WIDTH = 7;//log2(COL_SYNC) + 1
@@ -231,9 +231,6 @@ wire wRow_end;
 reg [15:0] wCs;
 
 reg [DATA_WIDTH-1:0] woDin[0:15];
-
-wire [6:0] wAcc_split;
-
 
 //------------------------------------------------
 // FSM
@@ -393,7 +390,32 @@ always @(posedge clk, negedge rstn) begin
 			end
 			default: rPrevState <= 2'b00;
     	endcase
-		if(rCnt_delay == windowDelay)begin
+
+		if(rCnt_delay == ACC_DELAY) begin
+			if(!(rCol == (MAXCOL -2))) begin
+				if(rCol_toggle) begin
+					rAddr[0] <= rAddr[0] + 1;
+					rAddr[1] <= rAddr[1] + 1;
+					rAddr[4] <= rAddr[4] + 1;
+					rAddr[5] <= rAddr[5] + 1;
+					rAddr[8] <= rAddr[8] + 1;
+					rAddr[9] <= rAddr[9] + 1;
+					rAddr[12] <= rAddr[12] + 1;
+					rAddr[13] <= rAddr[13] + 1;
+				end
+				else begin
+					rAddr[2] <= rAddr[2] + 1;
+					rAddr[3] <= rAddr[3] + 1;
+					rAddr[6] <= rAddr[6] + 1;
+					rAddr[7] <= rAddr[7] + 1;
+					rAddr[10] <= rAddr[10] + 1;
+					rAddr[11] <= rAddr[11] + 1;
+					rAddr[14] <= rAddr[14] + 1;
+					rAddr[15] <= rAddr[15] + 1;
+				end
+			end
+		end
+		else if(rCnt_delay == windowDelay)begin
 			if(!(rCol == (MAXCOL -2))) begin
 				if(rCol_toggle) begin
 					rAddr[0] <= rAddr[0] + 1;
@@ -879,7 +901,7 @@ always @(posedge clk, negedge rstn) begin //name
 end
 
 assign oCs = wCs;
-assign oMac_vld = (rCnt_delay > 4)? 1'b1 : 1'b0;
+assign oMac_vld = (rCnt_delay < 3)? 1'b1 : 1'b0;//starting split 
 
 assign oAddr0 = rAddr[0];
 assign oAddr1 = rAddr[1];
@@ -898,7 +920,10 @@ assign oAddr13 = rAddr[13];
 assign oAddr14 = rAddr[14];
 assign oAddr15 = rAddr[15];
 
-assign wAcc_split = (rCnt_delay >= ACC_DELAY) ? 7'd64 : 7'd0;
+wire [6:0] wAcc_split;
+assign wAcc_split = (rCnt_delay > ACC_DELAY + ACC_DELAY_2) ? 7'd64 
+				  : (rCnt_delay > ACC_DELAY) ? 7'd0 
+				  : (rCnt_delay > ACC_DELAY - ACC_DELAY_2) ? 7'd64 :7'd0;
 
 assign oDin0_0 = woDin[0][(0+wAcc_split)+:8];
 assign oDin0_1 = woDin[1][(0+wAcc_split)+:8];

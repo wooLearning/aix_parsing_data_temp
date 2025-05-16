@@ -8,9 +8,12 @@ module layer00 (
 	input [8:0] i_addra,	// input address for write
 	input [15:0] i_wea,		// input write enable
 	input [127:0] i_dia,		// input write data
-	
-	input [1:0] i_layerInfo,
 
+	input [15:0] iBias0,
+	input [15:0] iBias1,
+	input [15:0] iBias2,
+	input [15:0] iBias3,
+	
 	output[31:0] oLayer_result,
 
 	output oLayer_vld 
@@ -19,6 +22,7 @@ module layer00 (
 wire [127:0] oDin0;
 wire [127:0] oDin1;
 wire [127:0] oDin2;
+wire [127:0] oDin3;
 
 wire w_oMac_vld;
 
@@ -36,6 +40,7 @@ parsing_top_layer00 parsing(
 	.oDin0(oDin0),//r
 	.oDin1(oDin1),//g
 	.oDin2(oDin2),//b
+	.oDin3(oDin3),
 
 	.oMac_vld(w_oMac_vld)
 );
@@ -67,13 +72,6 @@ weight_ctrl(
 );
 
 wire wMac_vld = w_oMac_vld && o_ready;
-
-wire [127:0] wBank_iDin[0:11];
-
-assign wBank_iDin[0] = (i_layerInfo == 2'b00) ? oDin0 : 0;//0 is parsing2 output
-
-
-
 wire [19:0] oOut0[0:11];
 wire [19:0] oOut1[0:11];
 wire [19:0] oOut2[0:11];
@@ -94,6 +92,7 @@ mac_bank mac_bank(
 
 	.iDin6(oDin0),
 	.iDin7(oDin1),
+
 	.iDin8(oDin2),
 
 	.iDin9(oDin0),
@@ -190,19 +189,6 @@ always@(posedge clk, negedge rstn) begin
 		vld_i_d4 <= vld_i_d3;	
 	end
 end
-
-wire [63:0] w_bias;
-bias_ctrl bias_ctrl(
-	.clk(clk),
-	.rstn(rstn),
-	.i_vld(vld_i_d3),
-	.i_cs(w_oMac_vld),
-	.o_bias(w_bias)
-);
-wire [15:0] iBias0 = w_bias[0+:16];
-wire [15:0] iBias1 = w_bias[16+:16];
-wire [15:0] iBias2 = w_bias[32+:16];
-wire [15:0] iBias3 = w_bias[48+:16];
 
 wire w_add_vld0, w_add_vld1, w_add_vld2, w_add_vld3;//wire
 wire [22:0] w_after_add0[0:3];
@@ -385,61 +371,8 @@ additional_layer00 addLayer3(
 
 	.oOut(oLayer0_3)
 );
-assign oLayer_result = {oLayer0_3,oLayer0_2,oLayer0_1,oLayer0_0};
+assign oLayer_result = {oLayer0_3,oLayer0_2,oLayer0_1,oLayer0_0}
 
 assign oLayer_vld =  w_add_vld0;
-
-wire o_bram_en;
-wire [15:0] o_bram_cs;
-
-wire [5:0] o_bram_addr[0:15];
-wire [127:0] o_bram_data[0:15];
-
-dma_conv_02  dma_conv_02( 
-
-	.i_clk(clk),
-	.i_rstn(rstn),
-    .i_cal_fin(oLayer_vld),
-
-    .i_bram_data(oLayer_result),
-
-    .o_bram_en(o_bram_en),
-    .o_bram_cs(o_bram_cs),
-    .o_bram_addr_00(o_bram_addr[0]),
-    .o_bram_addr_01(o_bram_addr[1]),
-    .o_bram_addr_02(o_bram_addr[2]),
-    .o_bram_addr_03(o_bram_addr[3]),
-    .o_bram_addr_04(o_bram_addr[4]),
-    .o_bram_addr_05(o_bram_addr[5]),
-    .o_bram_addr_06(o_bram_addr[6]),
-    .o_bram_addr_07(o_bram_addr[7]),
-    .o_bram_addr_08(o_bram_addr[8]),
-    .o_bram_addr_09(o_bram_addr[9]),
-    .o_bram_addr_10(o_bram_addr[10]),
-    .o_bram_addr_11(o_bram_addr[11]),
-    .o_bram_addr_12(o_bram_addr[12]),
-    .o_bram_addr_13(o_bram_addr[13]),
-    .o_bram_addr_14(o_bram_addr[14]),
-    .o_bram_addr_15(o_bram_addr[15]),
-
-    .o_bram_data_00(o_bram_data[0]),
-    .o_bram_data_01(o_bram_data[1]),
-    .o_bram_data_02(o_bram_data[2]),
-    .o_bram_data_03(o_bram_data[3]),
-    .o_bram_data_04(o_bram_data[4]),
-    .o_bram_data_05(o_bram_data[5]),
-    .o_bram_data_06(o_bram_data[6]),
-    .o_bram_data_07(o_bram_data[7]),
-    .o_bram_data_08(o_bram_data[8]),
-    .o_bram_data_09(o_bram_data[9]),
-    .o_bram_data_10(o_bram_data[10]),
-    .o_bram_data_11(o_bram_data[11]),
-    .o_bram_data_12(o_bram_data[12]),
-    .o_bram_data_13(o_bram_data[13]),
-    .o_bram_data_14(o_bram_data[14]),
-    .o_bram_data_15(o_bram_data[15])
-
-);
-
 
 endmodule

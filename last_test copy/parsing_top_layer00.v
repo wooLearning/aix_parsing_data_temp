@@ -116,6 +116,23 @@ parsing_data_layer00 parsing_dut(
 	.oDin2_14(oDin2[112+:8]),
 	.oDin2_15(oDin2[120+:8]),
 
+	.oDin3_0(oDin3[0+:8]),
+	.oDin3_1(oDin3[8+:8]),
+	.oDin3_2(oDin3[16+:8]),
+	.oDin3_3(oDin3[24+:8]),
+	.oDin3_4(oDin3[32+:8]),
+	.oDin3_5(oDin3[40+:8]),
+	.oDin3_6(oDin3[48+:8]),
+	.oDin3_7(oDin3[56+:8]),
+	.oDin3_8(oDin3[64+:8]),
+	.oDin3_9(oDin3[72+:8]),
+	.oDin3_10(oDin3[80+:8]),
+	.oDin3_11(oDin3[88+:8]),
+	.oDin3_12(oDin3[96+:8]),
+	.oDin3_13(oDin3[104+:8]),
+	.oDin3_14(oDin3[112+:8]),
+	.oDin3_15(oDin3[120+:8]),
+
 	.oMac_vld(oMac_vld)
 );
 

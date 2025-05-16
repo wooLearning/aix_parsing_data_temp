@@ -90,6 +90,23 @@ module parsing_data_layer00 (
 	output [7:0] oDin2_14,
 	output [7:0] oDin2_15,
 
+	output [7:0] oDin3_0,
+	output [7:0] oDin3_1,
+	output [7:0] oDin3_2,
+	output [7:0] oDin3_3,
+	output [7:0] oDin3_4,
+	output [7:0] oDin3_5,
+	output [7:0] oDin3_6,
+	output [7:0] oDin3_7,
+	output [7:0] oDin3_8,
+	output [7:0] oDin3_9,
+	output [7:0] oDin3_10,
+	output [7:0] oDin3_11,
+	output [7:0] oDin3_12,
+	output [7:0] oDin3_13,
+	output [7:0] oDin3_14,
+	output [7:0] oDin3_15,
+
 	output oMac_vld
 );
 
@@ -869,5 +886,22 @@ assign oDin2_12 = woDin[12][16+:8];
 assign oDin2_13 = woDin[13][16+:8]; 
 assign oDin2_14 = woDin[14][16+:8]; 
 assign oDin2_15 = woDin[15][16+:8]; 
+
+assign oDin3_0 = woDin[0][24+:8];
+assign oDin3_1 = woDin[1][24+:8];
+assign oDin3_2 = woDin[2][24+:8];
+assign oDin3_3 = woDin[3][24+:8]; 
+assign oDin3_4 = woDin[4][24+:8]; 
+assign oDin3_5 = woDin[5][24+:8]; 
+assign oDin3_6 = woDin[6][24+:8]; 
+assign oDin3_7 = woDin[7][24+:8]; 
+assign oDin3_8 = woDin[8][24+:8]; 
+assign oDin3_9 = woDin[9][24+:8]; 
+assign oDin3_10 = woDin[10][24+:8]; 
+assign oDin3_11 = woDin[11][24+:8]; 
+assign oDin3_12 = woDin[12][24+:8]; 
+assign oDin3_13 = woDin[13][24+:8]; 
+assign oDin3_14 = woDin[14][24+:8]; 
+assign oDin3_15 = woDin[15][24+:8]; 
 
 endmodule

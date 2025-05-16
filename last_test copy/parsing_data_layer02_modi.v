@@ -879,7 +879,7 @@ always @(posedge clk, negedge rstn) begin //name
 end
 
 assign oCs = wCs;
-assign oMac_vld = (rCnt_delay > 4)? 1'b1 : 1'b0;
+assign oMac_vld = (rCnt_delay < 3)? 1'b1 : 1'b0;//starting split 
 
 assign oAddr0 = rAddr[0];
 assign oAddr1 = rAddr[1];

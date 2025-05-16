@@ -23,7 +23,8 @@ module weight_ctrl #(
     output  [KERNEL_WIDTH-1:0]  o_kernel9,
     output  [KERNEL_WIDTH-1:0]  o_kernel10,
     output  [KERNEL_WIDTH-1:0]  o_kernel11
-    
+
+    // AXI ports        // not implemented yet
 );
     
 
@@ -163,7 +164,6 @@ rom_1024x72_3 u_rom_1024x72_3(
     // read-out
     .douta(w_rom[3])
 );
-
 endgenerate
 
 
