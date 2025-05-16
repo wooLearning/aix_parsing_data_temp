@@ -30,11 +30,13 @@ module weight_ctrl #(
 
 integer i;
 
-reg [3:0] addr_cnt;
-reg r_vld0, r_vld1, r_vld2, r_vld3;
+localparam ADDR_WIDTH = 5;
+reg [ADDR_WIDTH-1:0] addr_cnt;
 
 reg [71:0] weight[0:11];
 wire [71:0] w_rom[0:3];
+
+reg r_vld0, r_vld1;// delay 2clk
 
 always @(posedge clk) begin
     if(!rstn) begin
@@ -66,7 +68,7 @@ always @(posedge clk) begin
     end
     else begin
         for(i=0; i<12; i=i+1) begin
-            weight[i] <= weight[i];
+            weight[i] <= 0;
         end
     end
 end
@@ -74,9 +76,9 @@ end
 //addr counter register
 always @(posedge clk, negedge rstn) begin
     if(!rstn) begin
-        addr_cnt <= 4'b0;
+        addr_cnt <= 0;
     end 
-    else if(addr_cnt == 4'd11) begin
+    else if(!i_load_en) begin
         addr_cnt <= 0;
     end
     else if(r_vld1) begin
@@ -84,32 +86,25 @@ always @(posedge clk, negedge rstn) begin
     end
 end
 
-//valid register shifter
 always @(posedge clk, negedge rstn) begin
     if(!rstn) begin
-        r_vld0 <= 1'b0;
-        r_vld1 <= 1'b0;
-        r_vld2 <= 1'b0;
-        r_vld3 <= 1'b0;
-    end 
-    else if(r_vld3) begin
-        r_vld0 <= 1'b0;
-        r_vld1 <= 1'b0;
-        r_vld2 <= 1'b0;
-        r_vld3 <= 1'b0;
+        r_vld0 <=0;
+        r_vld1 <=0;
     end
     else if(i_load_en) begin
-        r_vld0 <= 1'b1;
+        r_vld0 <= i_load_en;
         r_vld1 <= r_vld0;
-        r_vld2 <= r_vld1;
-        r_vld3 <= r_vld2;
-    end 
+    end
+    else begin
+        r_vld0 <=0;
+        r_vld1 <=0;
+    end
 end
 
 wire w_cs = i_load_en;
 wire [9:0] w_rom_addr;
 assign w_rom_addr = {6'b0,addr_cnt[3:0]};
-assign o_ready = (r_vld0 & r_vld1 & ~r_vld2 & ~r_vld3) && (addr_cnt != 0);
+assign o_ready = (addr_cnt==5) || (addr_cnt==8) || (addr_cnt==11) ||(addr_cnt==14) ;
 
 // main outputs
 assign o_kernel0 = weight[0];

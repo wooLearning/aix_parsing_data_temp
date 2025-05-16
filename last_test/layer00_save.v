@@ -29,6 +29,36 @@ module layer00_save (
 
 integer i;
 
+reg [1:0] r_cnt;
+always @(posedge clk, negedge rstn) begin
+	if(!rstn) begin
+		r_cnt <=0;
+	end
+	else if(r_cnt <= 2'b11) begin
+		r_cnt <= 2'b0
+	end
+	else if(i_vld) begin
+		r_cnt <= r_cnt + 1'b1;
+	end
+	else begin
+		r_cnt <= r_cnt;
+	end
+end
+
+reg [127:0] r_ifm2;
+wire [127:0] cnt_shift = r_cnt << 5;
+always @(posedge clk, negedge rstn) begin
+	if(!rstn) begin
+		r_ifm2 <= 0;
+	end
+	else if(i_vld) begin
+		r_ifm2[(r_cnt << 5)+:32] < i_ofm;
+	end
+end
+
+
+
+//-----------------------------------
 reg [4:0] rMuxCnt;
 always @(posedge clk, negedge rstn) begin
 	if(!rstn) begin

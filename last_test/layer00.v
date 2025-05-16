@@ -19,7 +19,7 @@ module layer00 (
     output [7:0] oLayer0_2,
     output [7:0] oLayer0_3,
 
-	output o_ready
+	output oLayer_vld 
 );
 
 wire [127:0] oDin0;
@@ -54,9 +54,9 @@ weight_ctrl#(.KERNEL_WIDTH(72))
 weight_ctrl(
 	.clk(clk),
 	.rstn(rstn),
-	.i_load_en(w_oMac_vld),//load enable signal from SangWook
+	.i_load_en(w_oMac_vld),
 
-	.o_ready(o_ready),// enable signal from SangWook
+	.o_ready(o_ready),
 
 	// each kernel has 9 weights (9*8=72 bits)
    	.o_kernel0(iWeight[0]), // main outputs
@@ -184,14 +184,14 @@ always@(posedge clk, negedge rstn) begin
 		vld_i_d4 <= 0;
 	end
 	else begin 
-		vld_i_d1 <= w_oMac_vld;
+		vld_i_d1 <= wMac_vld;
 		vld_i_d2 <= vld_i_d1;
 		vld_i_d3 <= vld_i_d2;
 		vld_i_d4 <= vld_i_d3;	
 	end
 end
 
-wire add_vld0, add_vld1, add_vld2, add_vld3;
+wire w_add_vld0, w_add_vld1, w_add_vld2, w_add_vld3;//wire
 wire [22:0] w_after_add0[0:3];
 wire [22:0] w_after_add1[0:3];
 wire [22:0] w_after_add2[0:3];
@@ -225,7 +225,7 @@ adder_tree2 addertree2_0(//filter 0
 	.oOut2(w_after_add0[2]),
 	.oOut3(w_after_add0[3]),
 
-	.add_vld(add_vld0)
+	.add_vld(w_add_vld0)
 );
 
 adder_tree2 addertree2_1(//filter 1
@@ -256,7 +256,7 @@ adder_tree2 addertree2_1(//filter 1
 	.oOut2(w_after_add1[2]),
 	.oOut3(w_after_add1[3]),
 
-	.add_vld(add_vld1)
+	.add_vld(w_add_vld1)
 );
 adder_tree2 addertree2_2(//filter 2
 	.clk(clk),
@@ -286,7 +286,7 @@ adder_tree2 addertree2_2(//filter 2
 	.oOut2(w_after_add2[2]),
 	.oOut3(w_after_add2[3]),
 
-	.add_vld(add_vld2)
+	.add_vld(w_add_vld2)
 );
 adder_tree2 addertree2_3(//filter 3
 	.clk(clk),
@@ -316,14 +316,14 @@ adder_tree2 addertree2_3(//filter 3
 	.oOut2(w_after_add3[2]),
 	.oOut3(w_after_add3[3]),
 
-	.add_vld(add_vld3)
+	.add_vld(w_add_vld3)
 );
 
 
 additional_layer00 addLayer0(
 	.clk(clk), 
     .rstn(rstn), 
-    .i_vld(add_vld0), 
+    .i_vld(w_add_vld0), 
 	
 	.in0(w_after_add0[0]),
 	.in1(w_after_add0[1]),
@@ -335,7 +335,7 @@ additional_layer00 addLayer0(
 additional_layer00 addLayer1(
 	.clk(clk), 
 	.rstn(rstn), 
-	.i_vld(add_vld1), 
+	.i_vld(w_add_vld1), 
 	
 	.in0(w_after_add1[0]),
 	.in1(w_after_add1[1]),
@@ -347,7 +347,7 @@ additional_layer00 addLayer1(
 additional_layer00 addLayer2(
 	.clk(clk), 
 	.rstn(rstn), 
-	.i_vld(add_vld2), 
+	.i_vld(w_add_vld2), 
 	
 	.in0(w_after_add2[0]),
 	.in1(w_after_add2[1]),
@@ -359,7 +359,7 @@ additional_layer00 addLayer2(
 additional_layer00 addLayer3(
 	.clk(clk), 
 	.rstn(rstn), 
-	.i_vld(add_vld3), 
+	.i_vld(w_add_vld3), 
 	
 	.in0(w_after_add3[0]),
 	.in1(w_after_add3[1]),
@@ -368,6 +368,6 @@ additional_layer00 addLayer3(
 
 	.oOut(oLayer0_3)
 );
-
+assign oLayer_vld =  w_add_vld0;
 
 endmodule
